@@ -50,10 +50,10 @@ object UriTest extends App {
 
   println("===========")
   val txnSubscription = txnObservable subscribe txnObserver
-  txnSubscription.unsubscribe()
+  txnSubscription.unsubscribe
   println("===========")
   val itmSubscription = itmObservable subscribe itmObserver
-  itmSubscription.unsubscribe()
+  itmSubscription.unsubscribe
   println("===========")
   devLines foreach { println }
   println("===========")
