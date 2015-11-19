@@ -1,7 +1,7 @@
 package com.myspace.pickle
-/*
-import java.io.FileWriter
 
+import java.io.FileWriter
+/*
 import com.myspace.argo
 
 import scala.io.Source
@@ -77,5 +77,4 @@ object PickleTest extends App {
     }
   }
 }
-
 */
