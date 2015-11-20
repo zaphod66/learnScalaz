@@ -29,7 +29,7 @@ object LensTest extends App {
 
   val f1: Int => Int = x => x + 1
   val f2: Int => Int = x => x * 2
-  def f3 = Function.chain(List(f1, f2, f1))
+  val f3 = Function.chain(List(f1, f2, f1))
 
   val x = 2
   println(s"f($x) = ${f1(x)}, f2($x) = ${f2(x)}, f3($x) = ${f3(x)}, ")
