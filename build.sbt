@@ -2,7 +2,7 @@ name := """LearnScalaz"""
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.6"
 
 resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 
@@ -13,8 +13,7 @@ libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-effect" % scalazVersion,
   "org.scalaz.stream" %% "scalaz-stream" % "0.7a",
   "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
-  "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
-  "org.scala-lang.modules" %% "scala-pickling" % "0.10.1"
+  "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test"
 )
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
@@ -22,6 +21,10 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.11.4" % "test"
 
 libraryDependencies += "commons-io" % "commons-io" % "2.3"
+
+libraryDependencies += "org.scala-lang.modules" %% "scala-pickling" % "0.10.1"
+
+libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2"
 
 // libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.2"
 
