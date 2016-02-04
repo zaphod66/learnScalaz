@@ -129,5 +129,5 @@ object TypeLevelTest extends App {
 
   implicitly[LessThan[_2, _3]]
 
-  println(lessThan(implicitly[LessThan[_3, _8]]))
+  println(lessThan(implicitly[LessThan[_3, _7]]))
 }
