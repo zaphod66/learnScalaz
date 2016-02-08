@@ -11,7 +11,7 @@ object ReadPrintLineExample extends App {
 
   type DSL[A] = Coyoneda[Console, A]
 
-  def readLine: Free[DSL, String] = Free.liftFC(ReadLine(identity)
+  def readLine: Free[DSL, String] = Free.liftFC(ReadLine(identity))
   def printLine(line: String): Free[DSL, String] = Free.liftFC(PrintLine(line, ""))
 
   val program = for {

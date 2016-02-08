@@ -1,7 +1,8 @@
 package com.myspace.freeapplicative
 
 import scalaz._, Scalaz._
-/*
+import scala.language.higherKinds
+
 package object asmfreef {
   object algebra {
     sealed trait AsmF[F[_]] extends Applicative[F] {
@@ -97,7 +98,7 @@ package object asmfreef {
   }
 
   object example {
-    import algebra._
+//  import algebra._
     import dsl._
 
     def program =
@@ -112,4 +113,3 @@ package object asmfreef {
     lazy val evaled = evaluator.evaluate(program)
   }
 }
- */

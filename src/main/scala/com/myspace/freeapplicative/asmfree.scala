@@ -1,7 +1,7 @@
 package com.myspace.freeapplicative
 
 import scalaz._, Scalaz._
-/*
+
 package object asmfree {
   object algebra {
     sealed trait AsmF[A]
@@ -108,4 +108,3 @@ package object asmfree {
     lazy val evaled = evaluator.evaluate(program)
   }
 }
-*/

@@ -1,7 +1,7 @@
 package com.myspace.freeapplicative
 
 import scalaz._, Scalaz._
-/*
+
 package object confree {
   object algebra {
     sealed trait ConfigF[A]
@@ -113,4 +113,3 @@ package object confree {
     val serverConfigDecoded = serverConfigDecode.decodeJson(serverConfigJson)
   }
 }
-*/
