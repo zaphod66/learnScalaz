@@ -97,6 +97,7 @@ package object confree {
   object example {
     import argonaut._, Argonaut._
     import dsl._
+    import scalaz.syntax.applicative._
 
     case class AuthConfig(port: Int, host: String)
     case class ServerConfig(logging: Boolean, auth: AuthConfig)

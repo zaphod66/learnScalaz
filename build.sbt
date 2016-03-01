@@ -11,7 +11,6 @@ val scalazVersion = "7.1.3"
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % scalazVersion,
   "org.scalaz" %% "scalaz-effect" % scalazVersion,
-//"org.scalaz.stream" %% "scalaz-stream" % "0.7a",
   "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
   "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test"
 )
@@ -22,9 +21,9 @@ libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.4" % "test"
 
 libraryDependencies += "commons-io" % "commons-io" % "2.3"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-pickling" % "0.10.1"
+// libraryDependencies += "org.scala-lang.modules" %% "scala-pickling" % "0.10.1"
 
-libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2"
+// libraryDependencies += "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.2"
 
 // libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.2"
 
@@ -35,4 +34,5 @@ libraryDependencies += "io.argonaut" %% "argonaut" % "6.1-M4"
 scalacOptions += "-feature"
 
 initialCommands in console := "import scalaz._, Scalaz._"
+initialCommands in console in Test := "import scalaz._, Scalaz._, scalacheck.ScalazProperties._, scalacheck.ScalazArbitrary._, scalacheck.ScalaCheckBinding._"
 
