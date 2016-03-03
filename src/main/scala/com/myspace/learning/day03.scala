@@ -70,7 +70,7 @@ object day03 extends App {
   val m06 = Monoid[Int].zero
   val m07 = Monoid[Int @@ Tags.Multiplication].zero
 
-  println(s"m03 = $m03, m04 = $m04, m05 = $m05, m06 = $m06, m07 = $m07")
+  println(s"m03 = $m03, m04 = $m04, m05 = '$m05', m06 = $m06, m07 = $m07")
 
   val m08 = Tags.Multiplication(10) |+| Monoid[Int @@ Tags.Multiplication].zero
 
@@ -93,4 +93,11 @@ object day03 extends App {
 
   val m19 = lengthCompare("zen", "ants")    // scalaz.Ordering = LT
   val m20 = lengthCompare("zen", "ant")     // scalaz.Ordering = GT
+
+  // Duals
+  import scalaz.Dual._
+
+  val m21 = Dual("World!") |+| Dual("Hello, ")
+
+  println(s"""Dual("World!") |+| Dual("Hello, ") = ${Dual("World!") |+| Dual("Hello, ")}""")
 }
