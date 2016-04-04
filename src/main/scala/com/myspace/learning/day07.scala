@@ -70,4 +70,52 @@ object day07 extends App {
   } yield b
 
   val s3 = stackManip3(List(5, 8, 2, 1))  // (List(8, 2, 1), 5)
+
+  /////////////////////////////////////////////////////////////
+
+  // \/
+
+  val d1 = 1.right[String]
+  val d2 = "boom".left[Int]
+
+  val d3 = "boom".left[Int] >>= { x => (x + 1).right }
+  val d4 = for {
+    e1 <- "event 1 ok".right
+    e2 <- "event 2 failed!".left[String]
+    e3 <- "event 3 failed!".left[String]
+  } yield e1 |+| e2 |+| e3
+
+  val b1 = "ok".right.isRight // true
+  val b2 = "bad".left.isRight  // false
+
+  // getOrElse alias is '|'
+  val d5 = "ok".right.getOrElse("something wrong")
+  val d6 = "ok".left.getOrElse("something good")
+  val d7 = "ok".right | "something wrong"
+  val d8 = "bad".left | "something good"
+
+  // map to transform the right side
+  val d9 = "ok".right map { x => x + "!" }
+  val d10 = "ok".left[String] map { x => x + "!"}
+
+  // to chain on the left there is orElse, alias is '|||'
+  val d11 = "ok".right.orElse("good".right) // \/-(ok)
+  val d12 = "bad".left.orElse("good".right) // \/-(good)
+  val d13 = "ok".right ||| "good".right     // \/-(ok)
+  val d14 = "bad".left ||| "good".right     // \/-(good)
+
+  /////////////////////////////////////////////////////////////
+
+  // Validation (it's not a Monad, it's instead an Applicative Functor)
+
+  val v1 = "event 1 ok".success[String]
+  val v2 = "boom 1 fail".failure[String]
+
+  val v3 = ("evnt 1 ok ".success[String] |@| "evnt 2 boom!".failure[String] |@| "evnt 3 boom!".failure[String]) { _ + _ + _ }
+
+  // NonEmptyList
+
+  val v4 = "evnt 1 ok!".successNel[String]
+  val v5 = "evnt 2 boom!".failureNel[String]
+  val v6 = ("evnt 1 ok".successNel[String] |@| "evnt 2 boom!".failureNel[String] |@| "evnt 3 boom!".failureNel[String]) {_ + _ + _}
 }
