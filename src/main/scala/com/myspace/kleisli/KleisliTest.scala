@@ -46,16 +46,16 @@ object KleisliTest extends App {
       List(
         Country("Germany",
           List(
-            City("Hamburg"), City("Berlin"))))),
+            City("Hamburg", inhabitants = 11), City("Berlin", inhabitants = 12))))),
     Continent("America",
       List(
         Country("USA",
           List(
-            City("Washington"), City("New York"))))),
+            City("Washington", inhabitants = 21), City("New York", inhabitants = 22))))),
     Continent("Asia",
       List(
         Country("India",
-          List(City("New Dehli"), City("Calcutta"))))))
+          List(City("New Dehli", inhabitants = 31), City("Calcutta", inhabitants = 32))))))
 
   def continents(n: String): List[Continent] = data.filter(k => k.name.contains(n))
   def countries(continent: Continent): List[Country] = continent.countries
