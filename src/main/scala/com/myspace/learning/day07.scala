@@ -118,4 +118,29 @@ object day07 extends App {
   val v4 = "evnt 1 ok!".successNel[String]
   val v5 = "evnt 2 boom!".failureNel[String]
   val v6 = ("evnt 1 ok".successNel[String] |@| "evnt 2 boom!".failureNel[String] |@| "evnt 3 boom!".failureNel[String]) {_ + _ + _}
+
+  case class P(s: String, i: Int) {
+    def +(that: P): P = P(this.s + " + " + that.s, this.i + that.i)
+    override def toString: String = s + " = " + i
+  }
+
+  implicit val pSemiGroup = new Semigroup[P] {
+    def append(f1: P, f2: => P): P = f1 + f2
+  }
+
+  val v7 = P("One", 1).success[String]
+  val v8 = P("Two", 2).success[String]
+
+  val v9 = (v7 |@| v8) { _ + _ }
+
+  val v10 = "boom".failure[P]
+  val v11 = (v7 |@| v10) { _ + _ }
+
+  val v12 = v7 +++ v8
+  val v13 = v7 +|+ v8
+  val v14 = v7 +|+ v10
+  val v15 = v10 +|+ v7
+  val v16 = v10 +|+ v10
+
+  val t = v9.getOrElse(P("Zero", 0))
 }

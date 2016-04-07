@@ -60,4 +60,9 @@ object day09 extends App {
   val i1 = 0: Id[Int]
   val i2 = 1 visit { case x@(2|3) => List(x * 2) }  // List(1)
   val i3 = 2 visit { case x@(2|3) => List(x * 2) }  // List(4)
+
+  def f[A](tree: Tree[A]): Unit = tree match {
+    case Tree.Node(n, s) => { println(n); s foreach f }
+    case _               => println("--")
+  }
 }
