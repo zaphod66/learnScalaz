@@ -22,13 +22,15 @@ object MonadTransformers extends App {
 
   // Monad transformers to the rescue
 
-  type Error[A] = \/[String, A]
+  type Error[A] = String \/ A
   type Res[A] = OptionT[Error, A]
 
   val r2 = 42.point[Res]
   val t3 = for {
     value <- r2
   } yield value.toString
+
+  val t4 = r2 map { _.toString }
 
   // see http://underscore.io/blog/posts/2013/12/20/scalaz-monad-transformers.html
 
@@ -50,7 +52,8 @@ object MonadTransformers extends App {
   def positive(in: Int): \/[String, Boolean] = if (in > 0) true.right else "negative".left
 
   val r6 = r2 flatMapF positive
-  val r7 = -2.point[Res] flatMapF positive
+
+  val r7 = (-2).point[Res] flatMapF positive
 
   println(s"r5 = $r5")
   println(s"r6 = $r6, r6.run = ${r6.run}")
