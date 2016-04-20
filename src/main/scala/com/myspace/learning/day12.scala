@@ -111,8 +111,8 @@ object day12 {
     t.traverseS[S, B] { a => State { (s: S) => (g(s), f(a)) } }
 
   val loop = collect(List(1, 2, 3, 4))( _ * 2 )( (_: Int) + 11 )
-  val p0 = loop.run(0)
-  val p1 = loop.run(5)
+  val r1 = loop.run(0)
+  val r2 = loop.run(5)
 
   // Second: pure transformation but dependent on the state a -> b -> c,
   // evolving the state with a computation of m b
@@ -125,6 +125,6 @@ object day12 {
       } yield (a, n)
     } eval 0
 
-  val l6 = label(List(10, 2, 8))
-  val l7 = label(tree)
+  val l7 = label(List(10, 2, 8))
+  val l8 = label(tree)
 }
