@@ -14,7 +14,7 @@ object day16 extends App {
 
   val f1 = logTime { slowFib(30) }
   val f2 = logTime { slowFib(40) }
-  val f3 = logTime { slowFib(45) }
+//val f3 = logTime { slowFib(45) }
 
   val memoFib: Int => Int = Memo.mutableHashMapMemo {
     case 0 => 0
@@ -65,7 +65,7 @@ object day16 extends App {
     _ <- arr.write(0, false)
     _ <- arr.write(1, false)
 
-    nsq = math.sqrt(n.toDouble).toInt + 0
+    nsq = math.sqrt(n.toDouble).toInt
 
     _ <- mapM (1 |-> nsq) { i =>
       for {
@@ -85,7 +85,9 @@ object day16 extends App {
       collect { case (true, x) => x}
 
   val p1 = primes(100)
-
   p1 foreach { i => print(s"$i ") }
   println
+
+  val p2 = primes(1000)
+  p2 foreach { i => print(s"$i ") }
 }
