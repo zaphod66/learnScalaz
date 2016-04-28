@@ -5,7 +5,7 @@ import java.io.{File, PrintStream}
 object ScalaWordCount {
   def _main(args: Array[String]) = {
 
-    if (args.size < 2) {
+    if (args.length < 2) {
       println("usage: wordCount <in.txt> <out.txt>")
     } else {
       val lines = scala.io.Source.fromFile(args(0)).getLines()
