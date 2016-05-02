@@ -10,4 +10,16 @@ object day17 extends App {
   } yield ()
 
   action1.unsafePerformIO
+
+  val action2 = IO {
+    val source = scala.io.Source.fromFile("./build.sbt")
+    source.getLines().toStream
+  }
+
+  val l1 = action2.unsafePerformIO().toList
+
+  def prog: IO[Unit] = for {
+    line <- readLn
+    _    <- putStrLn(line)
+  } yield ()
 }
