@@ -1,5 +1,7 @@
 package com.myspace.stackless
 
+import scala.language.implicitConversions
+
 case class State[S, +A](runS: S => (A, S)) {
 
   def map[B](f: A => B) = State[S, B](s => {
@@ -24,25 +26,32 @@ case class State[S, +A](runS: S => (A, S)) {
 ///////////
 
 sealed trait Trampoline[+A] {
+  def flatMap[B](f: A => Trampoline[B]): Trampoline[B] = this match {
+    case FlatMap(a, g) => FlatMap(a, (x: Any) => g(x) flatMap f)
+    case x => FlatMap(x, f)
+  }
+
+  def map[B](f: A => B): Trampoline[B] = flatMap(a => Done(f(a)))
+
   final def resume: Either[() => Trampoline[A], A] = this match {
     case Done(v)       => Right(v)
     case More(k)       => Left(k)
     case FlatMap(a, f) => a match {
       case Done(v)       => f(v).resume
-      case More(k)       => Left(() => FlatMap(k(), f))
-      case FlatMap(b, g) => (FlatMap(b, (x: Any) => FlatMap(g(x), f)): Trampoline[A]).resume
+      case More(k)       => Left(() => k() flatMap f)
+      case FlatMap(b, g) => b.flatMap((x: Any) => g(x) flatMap f).resume
     }
   }
 
-  final def runT: A => resume match {
+  final def runT: A = resume match {
     case Right(a) => a
     case Left(k)  => k().runT
   }
 
-//  final def runTsimple: A = this match {
-//    case More(k) => k().runTsimple
-//    case Done(v) => v
-//  }
+  final def runTsimple: A = this match {
+    case More(k) => k().runTsimple
+    case Done(v) => v
+  }
 }
 
 case class More[+A](k: () => Trampoline[A]) extends Trampoline[A]
@@ -107,13 +116,27 @@ object Stackless extends App {
   val ra1 = 1 to 10000
 
   try {
-    val isEven = even(ra1.toList)
+    even(ra1.toList)
   } catch {
-    case t: Throwable => println(s"catch: $t")
+    case t: Throwable => println(s"catch:  $t")
   }
 
   val isEvenT = evenT(ra1.toList)
-  val isEven  = isEvenT.runT
+  val isEven1 = isEvenT.runTsimple
+  val isEven2 = isEvenT.runT
 
-  println(s"isEven: $isEven")
+  println(s"isEven: $isEven1, $isEven2")
+
+  def fib(n: Int): Trampoline[Int] =
+    if (n <= 1) Done(n) else for {
+      f1 <- More( () => fib(n - 1))
+      f2 <- More( () => fib(n - 2))
+    } yield f1 + f2
+
+  val fibT = fib(10)
+  val fibn = fibT.runT
+
+  println(s"fib(10) = $fibn")
+
+  implicit def step[A](a: => A): Trampoline[A] = More( () => Done(a) )
 }
