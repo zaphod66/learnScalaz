@@ -43,6 +43,14 @@ sealed trait Trampoline[+A] {
     }
   }
 
+  def zip[B](b: Trampoline[B]): Trampoline[(A, B)] =
+    (this.resume, b.resume) match {
+      case (Right(a), Right(b)) => Done((a, b))
+      case (Right(a), Left(b))  => More(() => Done(a) zip b())
+      case (Left(a),  Right(b)) => More(() => a() zip Done(b))
+      case (Left(a),  Left(b))  => More(() => a() zip b())
+    }
+
   final def runT: A = resume match {
     case Right(a) => a
     case Left(k)  => k().runT
@@ -138,5 +146,37 @@ object Stackless extends App {
 
   println(s"fib(10) = $fibn")
 
+  // completly Stackless
+
+  def f(x: Int): Int = x + 2
+  def g(y: Int): Int = y * 2
+  def h(z: Int): Int = z / 3
+
+  val f1 = f(1)
+  val f2 = g(f1)
+  val f3 = h(f2)
+
+  // can be transformed to
+
   implicit def step[A](a: => A): Trampoline[A] = More( () => Done(a) )
+
+  val f4 = ( for {
+    x <- f(1)
+    y <- g(x)
+    z <- h(y)
+  } yield z ).runT
+
+  // Cooperative multitasking
+
+  val h1 = for {
+    _ <- print("Hello, ")
+    _ <- println("World!")
+  } yield ()
+
+  val h2 = h1 zip h1
+
+  h2.runT
+
+  // Free Monads as a Generalization of Trampoline
+
 }
