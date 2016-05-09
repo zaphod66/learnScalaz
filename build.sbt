@@ -12,6 +12,7 @@ libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % scalazVersion,
   "org.scalaz" %% "scalaz-effect" % scalazVersion,
   "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
+  "org.scalaz.stream" %% "scalaz-stream" % "0.8",
   "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test"
 )
 
