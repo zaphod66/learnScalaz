@@ -71,6 +71,25 @@ case class FlatMap[A, +B](sub: Trampoline[A], k: A => Trampoline[B]) extends Tra
 
 ///////////
 
+sealed trait Free[S[+_], +A] {
+  private class FFlatMap[S[+_], A, +B](a: Free[S, A],
+                                       f: A => Free[S, B]) extends Free[S, B]
+
+  final def resume(implicit S: Functor[S]): Either[S[Free[S, A]], A] = this match {
+    case Done(a) => Right(a)
+    case More(k) => Left(k)
+  }
+}
+
+case class FDone[S[+_], +A](a: A) extends Free[S, A]
+case class FMore[S[+_], +A](k: S[Free[S, A]]) extends Free[S, A]
+
+trait Functor[F[_]] {
+  def map[A, B](m: F[A])(f: A => B): F[B]
+}
+
+///////////
+
 object Stackless extends App {
   def getState[S]: State[S, S] = { /* print("getState->"); */ State(s => { println(s"$s => ($s, $s)"); (s, s)}) }
 
@@ -179,6 +198,14 @@ object Stackless extends App {
   h2.runT
 
   // Free Monads as a Generalization of Trampoline
+
+  type FTrampoline[+A] = Free[Function0, A]
+
+  implicit val f0Functor = new Functor[Function0] {
+    def map[A, B](a: () => A)(f: A => B) =
+      () => f(a())
+  }
+
 
 }
 
