@@ -19,22 +19,21 @@ object OtherTest extends App {
   val t1 = Thing.point(1)
   val t2 = t1.flatMap(i => Thing.point(i + 1))
 
-  println(s"t1 = $t1")
-  println(s"t2 = $t2")
+  println("=========")
 
   val t3 = for {
-    i <- t2
-  } yield i * 2
+    i <- t1
+  } yield i + 1
 
   println(s"t3 = $t3")
 
 }
 
 case class Thing(i: Int) {
-  def map(f: Int => Int)       = { println(s"map($i => ${f(i)})"); new Thing(f(i)) }
-  def flatMap(f: Int => Thing) = { println(s"flatMap($i => ${f(i)})");  f(i) }
+  def map(f: Int => Int)       = { val t = f(i); println(s"map($i => $t)"); t }
+  def flatMap(f: Int => Thing) = { val t = f(i); println(s"flatMap($i => $t)"); t }
 }
 
 object Thing {
-  def point(i: Int) = new Thing(i)
+  def point(i: Int) = { println(s"point($i)"); Thing(i) }
 }
