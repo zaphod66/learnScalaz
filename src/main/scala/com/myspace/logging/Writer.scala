@@ -1,6 +1,7 @@
 package com.myspace.logging
 
 import scala.language.implicitConversions
+import scala.language.reflectiveCalls
 
 // see http://blog.tmorris.net/posts/the-writer-monad-using-scala-example/
 
