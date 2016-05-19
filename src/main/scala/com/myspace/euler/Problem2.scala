@@ -1,5 +1,7 @@
 package com.myspace.euler
 
+// Feven(n) = 4 ∗ Feven(n-1) + Feven(n−2)
+
 object Problem2 extends App {
   val fibs: Stream[Int] = 0 #:: fibs.scanLeft(1)(_ + _)
 
