@@ -20,12 +20,9 @@ object SampleData {
 }
 
 trait ReportModule[Raw, Frm] {
-  type Error = String
+  type Error      = String
   type ErrorOr[A] = Error \/ A
   type Data[A]    = ListT[ErrorOr, A]
-
-  type DataRaw = Data[Raw]
-  type DataFrm = Data[Frm]
 
   def stringify: Raw => Frm
 
@@ -52,14 +49,14 @@ object ListTransformer extends App {
   println("ListTransformer")
 
   type Raw = (String, Seq[Transaction])
-  type Frm = String
+  type Frm = (String, String)
 
   def gen: () => List[Raw] = () => List(("Meta1", SampleData.txns1), ("Meta2", SampleData.txns2))
-  def frm: Raw => Frm = r => s"""${r._1} + ${r._2.mkString("-")}"""
+  def frm: Raw => Frm = r => (r._1, r._2.mkString("-"))
 
   val reporter = new Reporter[Raw, Frm](gen, frm)
 
-  val result = reporter.report()
+  val result = reporter.report().run
 
   println(s"result: $result")
 }
