@@ -19,17 +19,15 @@ object SampleData {
   )
 }
 
-trait ReportModule {
+trait ReportModule[Raw, Frm] {
   type Error = String
   type ErrorOr[A] = Error \/ A
   type Data[A]    = ListT[ErrorOr, A]
 
-  type Raw     = (String, Seq[Transaction])
-  type Frm     = String
   type DataRaw = Data[Raw]
   type DataFrm = Data[Frm]
 
-  def stringify(ts: Raw): Frm = s"""${ts._1} + ${ts._2.mkString("-")}"""
+  def stringify: Raw => Frm
 
   def collect:               Kleisli[Data, Unit, Raw]
   def format(f: Raw => Frm): Kleisli[Data, Raw, Frm]
@@ -39,23 +37,27 @@ trait ReportModule {
   def report = collect andThen format(stringify) andThen handle andThen complete
 }
 
-class Reporter extends ReportModule {
-  val data1 = ("Meta1", SampleData.txns1)
-  val data2 = ("Meta2", SampleData.txns2)
+class Reporter[Raw, Frm](generate: () => List[Raw], f: Raw => Frm) extends ReportModule[Raw, Frm] {
+  val data = generate()
 
-  //val ll: Data[Raw] = new ListT[ErrorOr, Raw](\/-(List(SampleData.txns1, SampleData.txns2)))
-  val ll: Data[Raw] = new ListT[ErrorOr, Raw](\/-(List(data1, data2)))
+  def stringify: Raw => Frm = f
 
-  def collect                  = Kleisli[Data, Unit, Raw]( _ => ll )
-  def format(f: Raw => String) = Kleisli[Data, Raw, Frm](a => new ListT[ErrorOr, Frm](\/-(List(f(a)))))
-  def handle                   = Kleisli[Data, Frm, Frm](s => { println(s"handle($s)"); new ListT[ErrorOr, Frm](\/-(List(s))) })
-  def complete                 = Kleisli[Data, Frm, Frm](s => { println(s"complete($s)"); new ListT[ErrorOr, Frm](\/-(List(s))) })
+  def collect               = Kleisli[Data, Unit, Raw]( _ => new ListT[ErrorOr, Raw](\/-(data)) )
+  def format(f: Raw => Frm) = Kleisli[Data, Raw, Frm](a => new ListT[ErrorOr, Frm](\/-(List(f(a)))))
+  def handle                = Kleisli[Data, Frm, Frm](s => { println(s"handle($s)"); new ListT[ErrorOr, Frm](\/-(List(s))) })
+  def complete              = Kleisli[Data, Frm, Frm](s => { println(s"complete($s)"); new ListT[ErrorOr, Frm](\/-(List(s))) })
 }
 
 object ListTransformer extends App {
   println("ListTransformer")
 
-  val reporter = new Reporter
+  type Raw = (String, Seq[Transaction])
+  type Frm = String
+
+  def gen: () => List[Raw] = () => List(("Meta1", SampleData.txns1), ("Meta2", SampleData.txns2))
+  def frm: Raw => Frm = r => s"""${r._1} + ${r._2.mkString("-")}"""
+
+  val reporter = new Reporter[Raw, Frm](gen, frm)
 
   val result = reporter.report()
 
