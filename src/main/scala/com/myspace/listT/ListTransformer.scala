@@ -39,24 +39,49 @@ class Reporter[Raw, Frm](generate: () => List[Raw], f: Raw => Frm) extends Repor
 
   def stringify: Raw => Frm = f
 
-  def collect               = Kleisli[Data, Unit, Raw]( _ => new ListT[ErrorOr, Raw](\/-(data)) )
-  def format(f: Raw => Frm) = Kleisli[Data, Raw, Frm](a => new ListT[ErrorOr, Frm](\/-(List(f(a)))))
-  def handle                = Kleisli[Data, Frm, Frm](s => { println(s"handle($s)"); new ListT[ErrorOr, Frm](\/-(List(s))) })
-  def complete              = Kleisli[Data, Frm, Frm](s => { println(s"complete($s)"); new ListT[ErrorOr, Frm](\/-(List(s))) })
+  def collect               = Kleisli[Data, Unit, Raw]( _ => ListT[ErrorOr, Raw](\/-(data)) )
+  def format(f: Raw => Frm) = Kleisli[Data, Raw, Frm](a => ListT[ErrorOr, Frm](\/-(List(f(a)))))
+  def handle                = Kleisli[Data, Frm, Frm](s => { println(s"handle($s)"); ListT[ErrorOr, Frm](\/-(List(s))) })
+  def complete              = Kleisli[Data, Frm, Frm](s => { println(s"complete($s)"); ListT[ErrorOr, Frm](\/-(List(s))) })
 }
 
 object ListTransformer extends App {
   println("ListTransformer")
 
-  type Raw = (String, Seq[Transaction])
-  type Frm = (String, String)
+  object plain {
+    type Meta = String
+    type Txns = Seq[Transaction]
+    type Raw = (Meta, Txns)
+    type Frm = (Meta, String)
 
-  def gen: () => List[Raw] = () => List(("Meta1", SampleData.txns1), ("Meta2", SampleData.txns2))
-  def frm: Raw => Frm = r => (r._1, r._2.mkString("-"))
+    def gen: () => List[Raw] = () => List(("Meta1", SampleData.txns1), ("Meta2", SampleData.txns2))
+    def f: Txns => String = _.mkString("-")
+    def frm: Raw => Frm = r => (r._1, f(r._2))
 
-  val reporter = new Reporter[Raw, Frm](gen, frm)
+    val reporter = new Reporter[Raw, Frm](gen, frm)
 
-  val result = reporter.report().run
+    val result = reporter.report().run
+  }
 
-  println(s"result: $result")
+  object tuple {
+    type Meta = (String, Int)
+    type Raw = (Meta, Seq[Transaction])
+    type Frm = (Meta, String)
+
+    def gen: () => List[Raw] = () => List((("Meta1", 1), SampleData.txns1), (("Meta2", 2), SampleData.txns2))
+    def frm: Raw => Frm = r => (r._1, r._2.mkString("-"))
+    def nam: Meta => String = m => m._1
+    def imp: Meta => Int    = m => m._2
+
+    val reporter = new Reporter[Raw, Frm](gen, frm)
+
+    val result = reporter.report().run
+  }
+
+  val r1 = plain.result
+  println(s"result plain: $r1")
+
+  val r2 = tuple.result
+  println(s"result tuple: $r2")
+
 }
