@@ -1,5 +1,7 @@
 package com.myspace.eratosthenes
 
+import org.scalameter._
+
 object PrimeTest extends App {
 
   def primeStream(stream: Stream[Int] = Stream.from(3, 2)): Stream[Int] =
@@ -34,11 +36,24 @@ object PrimeTest extends App {
     seq.tail.toList
   }
 
-  val primes1 = primeStream().take(29).toList
-  val primes2 = calcPrimeStream(120).toList
-  val primes3 = primeIter(120)
+  val standardConfig = config(
+    Key.exec.minWarmupRuns -> 20,
+    Key.exec.maxWarmupRuns -> 40,
+    Key.exec.benchRuns -> 25,
+    Key.verbose -> true
+  ) withWarmer new Warmer.Default
 
-  println(s"primes1: $primes1")
-  println(s"primes2: $primes2")
-  println(s"primes3: $primes3")
+  val END = 20000
+  var primesToTake = 0
+  var primes1: List[Int] = Nil
+  var primes2: List[Int] = Nil
+  var primes3: List[Int] = Nil
+
+  val time2 = standardConfig measure { primes2 = calcPrimeStream(END).toList }
+  val time3 = standardConfig measure { primes3 = primeIter(END); primesToTake = primes3.size }
+  val time1 = standardConfig measure { primes1 = primeStream().take(primesToTake).toList }
+
+  println(s"primes1: ${primes1.size} ($time1 ms)")
+  println(s"primes2: ${primes2.size} ($time2 ms)")
+  println(s"primes3: ${primes3.size} ($time3 ms)")
 }
