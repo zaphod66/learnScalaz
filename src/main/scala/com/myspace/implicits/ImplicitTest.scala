@@ -1,5 +1,7 @@
 package com.myspace.implicits
 
+// continued in learnShapeless branch typeDerivation
+
 object equalManual {
   trait Eq[T] {
     def eqv(x: T, y: T): Boolean
