@@ -1,6 +1,6 @@
 package com.myspace.euler
 
-object Problem5 extends App {
+object Problem005 extends App {
   def primeFactors(n: Int): Seq[Int] = {
     def go(i: Int, d: Int, acc: Seq[Int]): Seq[Int] = {
       i match {
@@ -51,5 +51,7 @@ object Problem5 extends App {
 //  println(s"mf: $mapPrimeFactors")
 //  println(s"rf: $redPrimeFactors")
   println(s"pp: $primes")
+
+  println("Problem 5")
   println(s"result: $result")
 }

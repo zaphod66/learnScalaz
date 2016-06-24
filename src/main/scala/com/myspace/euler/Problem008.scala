@@ -1,6 +1,6 @@
 package com.myspace.euler
 
-object Problem8 extends App {
+object Problem008 extends App {
   val str = "73167176531330624919225119674426574742355349194934" +
             "96983520312774506326239578318016984801869478851843" +
             "85861560789112949495459501737958331952853208805511" +
@@ -38,6 +38,7 @@ object Problem8 extends App {
     go(0, 0L)
   }
 
+  println("Problem 8")
   println(s"maxProd(str,  4): ${maxProd(str,  4)}")
   println(s"maxProd(str, 13): ${maxProd(str, 13)}")
 }

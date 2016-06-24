@@ -2,7 +2,7 @@ package com.myspace.euler
 
 import scala.collection.immutable.Stream.cons
 
-object Problem3 extends App {
+object Problem003 extends App {
 
   val n = 600851475143L
 //val n = 13195L

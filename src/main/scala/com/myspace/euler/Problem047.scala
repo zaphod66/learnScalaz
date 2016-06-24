@@ -1,6 +1,6 @@
 package com.myspace.euler
 
-object Problem47 extends App {
+object Problem047 extends App {
   def primeFactors(n: Int): Seq[Int] = {
     def go(i: Int, d: Int, acc: Seq[Int]): Seq[Int] = {
       i match {
@@ -36,6 +36,8 @@ object Problem47 extends App {
   val a = f.toArray
   println("finding")
   val idx = ff(a)
+
+  println("Problem 47")
 
   idx foreach { i => (i to i + 3) foreach { k => println(s"n = ${a(k)._2} - ${primeFactors(a(k)._2)}") } }
 }

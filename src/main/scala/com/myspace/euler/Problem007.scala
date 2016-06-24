@@ -1,6 +1,6 @@
 package com.myspace.euler
 
-object Problem7 extends App {
+object Problem007 extends App {
   def primeStream(stream: Stream[Int] = Stream.from(3, 2)): Stream[Int] =
     stream.head #:: primeStream(stream.tail.filter(_ % stream.head != 0))
 
@@ -27,6 +27,7 @@ object Problem7 extends App {
   val prime1 = primeStream().take(10000).toList.reverse.head
   val prime2 = primesIter(104743).reverse.head
 
+  println("Problem 7")
   println(s"primeStream().take(10001).toList.reverse.head: $prime1")
   println(s"primes(104743): $prime2")
 }

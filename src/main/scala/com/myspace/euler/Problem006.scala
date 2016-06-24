@@ -1,6 +1,6 @@
 package com.myspace.euler
 
-object Problem6 extends App {
+object Problem006 extends App {
   val r = 1 to 100
 
   val sumOfSquares = r.map( x => x * x ).sum
@@ -9,5 +9,6 @@ object Problem6 extends App {
   println(s"sumOfSquares = $sumOfSquares")
   println(s"squareOfSum  = $squareOfSum")
 
-  println(s"difference   = ${squareOfSum - sumOfSquares}")
+
+  println(s"Problem 6    = ${squareOfSum - sumOfSquares}")
 }
