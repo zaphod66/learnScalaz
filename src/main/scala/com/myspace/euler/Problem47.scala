@@ -23,7 +23,7 @@ object Problem47 extends App {
     go(0)
   }
 
-  val r = 1 to 200000
+  val r = 1 to 135000
   println("primeFactors")
   val m = r map { i => primeFactors(i) }
   println("indexing")
@@ -37,6 +37,5 @@ object Problem47 extends App {
   println("finding")
   val idx = ff(a)
 
-  println(f.size)
-  idx foreach { i => println(s"${a(i + 0)}, ${a(i + 1)}, ${a(i + 2)}, ${a(i + 3)}")}
+  idx foreach { i => (i to i + 3) foreach { k => println(s"n = ${a(k)._2} - ${primeFactors(a(k)._2)}") } }
 }
