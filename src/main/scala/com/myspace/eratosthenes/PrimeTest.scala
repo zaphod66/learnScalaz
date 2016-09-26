@@ -50,7 +50,8 @@ object PrimeTest extends App {
   var primes3: List[Int] = Nil
 
   val time2 = standardConfig measure { primes2 = calcPrimeStream(END).toList }
-  val time3 = standardConfig measure { primes3 = primeIter(END); primesToTake = primes3.size }
+  val time3 = standardConfig measure { primes3 = primeIter(END) }
+  primesToTake = primes3.size
   val time1 = standardConfig measure { primes1 = primeStream().take(primesToTake).toList }
 
   println(s"primes1: ${primes1.size} ($time1 ms)")
