@@ -39,8 +39,13 @@ object IOMonad extends App {
 
   println(ioName2.unsafePerformIO())
 
-  val unsafeIo1 = IO.tryIO( Database.getUserById(2) )
-  val unsafeIoName = unsafeIo1 map { ou => ou.right map { u => u.map{ _.name } } }
+  val unsafeIo1 = IO.tryIO( Database.unsafeGetById(1) )
+  val unsafeIoName1 = unsafeIo1 map { ou => ou.right map { _.name } }
 
-  println(unsafeIoName.unsafePerformIO())
+  println(unsafeIoName1.unsafePerformIO())
+
+  val unsafeIo2 = IO.tryIO( Database.unsafeGetById(2) )
+  val unsafeIoName2 = unsafeIo2 map { ou => ou.right map { _.name } }
+
+  println(unsafeIoName2.unsafePerformIO())
 }
