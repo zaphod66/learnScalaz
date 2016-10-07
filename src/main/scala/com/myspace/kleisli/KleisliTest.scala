@@ -1,7 +1,5 @@
 package com.myspace.kleisli
 
-import scala.util.Try
-
 object KleisliTest extends App {
   import scalaz._
   import Scalaz._
