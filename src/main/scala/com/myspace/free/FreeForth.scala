@@ -1,6 +1,9 @@
+// see http://polygonalhell.blogspot.de/2014/12/scalaz-getting-to-grips-free-monad.html
+
 package com.myspace.free
 
-import scalaz._, Scalaz._
+import scalaz.Scalaz._
+import scalaz._
 
 sealed trait ForthOperators[A]
 
@@ -24,7 +27,7 @@ object FreeForth extends App {
     }
   }
 
-  // We can now use the Free.LiftF function to convert out functor into a Free Monad
+  // We can now use the Free.LiftF function to convert our functor into a Free Monad
 
   type ForthProgram[A] = Free[ForthOperators, A]
 
@@ -32,7 +35,7 @@ object FreeForth extends App {
 
   implicit def liftForth[A](forth: ForthOperators[A]): ForthProgram[A] = Free.liftF(forth)
 
-  // the type were wrapping (o: A) in the Monad is actually Unit because in this case we don't care about the returned value
+  // the type we are wrapping (o: A) in the Monad is actually Unit because in this case we don't care about the returned value
   def push(value: Int) = Push(value, ())
   def add = Add(())
   def mul = Mul(())
@@ -71,7 +74,7 @@ object FreeForth extends App {
       case Dup(cont) =>
         val a :: tail = stack
         runForthProgram(a :: a :: tail, cont)
-      case End(cont) =>
+      case End(_) =>
         stack
     }
   )
@@ -94,7 +97,7 @@ object FreeForth extends App {
       case Dup(cont) =>
         val a :: tail = stack
         (a :: a :: tail, cont)
-      case End(cont) =>
+      case End(_) =>
         (stack, Free.point())
     }
 
