@@ -43,7 +43,6 @@ class Reporter extends ReportModule {
   val data1 = ("Meta1", SampleData.txns1)
   val data2 = ("Meta2", SampleData.txns2)
 
-  //val ll: Data[Raw] = new ListT[ErrorOr, Raw](\/-(List(SampleData.txns1, SampleData.txns2)))
   val ll: Data[Raw] = new ListT[ErrorOr, Raw](\/-(List(data1, data2)))
 
   def collect                  = Kleisli[Data, Unit, Raw]( _ => ll )
@@ -60,4 +59,14 @@ object ListTransformer extends App {
   val result = reporter.report()
 
   println(s"result: $result")
+
+  val ass = List(List(1, 2), List(3, 4))
+
+  val ttt = ListT.fromList(ass)
+
+  import Scalaz._
+
+  println(s"ttt            = $ttt")
+  println(s"ttt.run        = ${ttt.run}")
+  println(s"ttt.headOption = ${ttt.headOption}")
 }
