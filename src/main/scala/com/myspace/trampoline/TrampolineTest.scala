@@ -1,5 +1,7 @@
 package com.myspace.trampoline
 
+import scala.util.{Try, Failure}
+
 object FirstTrampoline {
 
   sealed trait Trampoline[+A] {
@@ -26,7 +28,16 @@ object FirstTrampoline {
 
   def getState[S]: StateSimple[S, S]           = StateSimple(s => (s, s))
   def setState[S](s: S): StateSimple[S, Unit]  = StateSimple(_ => ((), s))
-  def pureState[A, S](a: A): StateSimple[S, A] = StateSimple(s => (a, s))
+  def pureState[S, A](a: A): StateSimple[S, A] = StateSimple(s => (a, s))
+
+  def zipIndex[A](as: List[A]): List[(Int, A)] =
+    as.foldLeft(
+      pureState[Int, List[(Int, A)]](List.empty[(Int,A)])
+    )((acc, a) => for {
+      xs <- acc
+      n  <- getState
+      _  <- setState(n + 1)
+    } yield (n,a)::xs).run(0)._1.reverse
 }
 
 object TrampolineTest extends App {
@@ -54,5 +65,13 @@ object TrampolineTest extends App {
 
     println(s"l1: ${l1.size}: even = $b1e, odd = $b1o")
     println(s"l2: ${l2.size}: even = $b2e, odd = $b2o")
+
+    val z3 = try { zipIndex(List.fill(10)('a')) } catch { case _: Throwable => List.empty[(Int, Char)] }
+    println(s"z3: $z3")
+
+    val z4 = try { zipIndex(List.fill(10000)('b')) } catch { case _: Throwable => List.empty[(Int, Char)] }
+    println(s"z4: $z4")
   }
+
+  testFirst
 }
