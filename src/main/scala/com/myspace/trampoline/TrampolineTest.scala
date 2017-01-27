@@ -23,6 +23,10 @@ object FirstTrampoline {
       f(a) run s1
     })
   }
+
+  def getState[S]: StateSimple[S, S]           = StateSimple(s => (s, s))
+  def setState[S](s: S): StateSimple[S, Unit]  = StateSimple(_ => ((), s))
+  def pureState[A, S](a: A): StateSimple[S, A] = StateSimple(s => (a, s))
 }
 
 object TrampolineTest extends App {
