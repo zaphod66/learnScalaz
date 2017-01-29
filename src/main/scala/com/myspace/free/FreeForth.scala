@@ -157,9 +157,11 @@ object FreeForth extends App {
 
   // ----------------------------------
 
-  // Using Coyoneda (you don't have to provide a Functor any longer
+  object Coyoneda {
+    // Using Coyoneda (you don't have to provide a Functor any longer
 
-//  type ForthProgramC[A] = Free.FreeC[ForthOperators, A]
-//
-//  implicit def liftForthC[A](forth: ForthOperators[A]): ForthProgramC[A] = Free.liftFC(forth)
+    type ForthProgramC[A] = Free.FreeC[ForthOperators, A]
+
+    implicit def liftForthC[A](forth: ForthOperators[A]): ForthProgramC[A] = Free.liftFC(forth)
+  }
 }
