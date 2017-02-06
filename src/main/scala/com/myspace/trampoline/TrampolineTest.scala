@@ -140,7 +140,7 @@ object FreeMonad {
 
     final def run(implicit S: Functor[S]): A = resume match {
       case Right(a) => a
-      case Left(k)  => ???
+      case Left(k)  => S.get(S.map(k)(_.run))
     }
 
     final def resume(implicit S: Functor[S]): Either[S[Free[S, A]], A] = this match {
@@ -170,10 +170,12 @@ object FreeMonad {
 
   trait Functor[F[_]] {
     def map[A, B](m: F[A])(f: A => B): F[B]
+    def get[A](fa: F[A]): A
   }
 
   implicit val f0Functor = new Functor[Function0] {
     def map[A, B](a: () => A)(f: A => B): () => B = () => f(a())
+    def get[A](fa: () => A): A = fa()
   }
 
 
@@ -265,11 +267,11 @@ object TrampolineTest extends App {
       case _ :: xs => More(() => even(xs))
     }
 
-    val l1 = List.fill(10000)('a')
+    val l1 = List.fill(1000)('a')
     val b1e = even(l1).run
     val b1o = odd(l1).run
 
-    val l2 = List.fill(10001)('a')
+    val l2 = List.fill(1001)('a')
     val b2e = even(l2).run
     val b2o = odd(l2).run
 
