@@ -10,6 +10,7 @@ val scalazVersion = "7.1.3"
 
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % scalazVersion,
+  "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
   "org.scalaz" %% "scalaz-effect" % scalazVersion,
   "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
   "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
