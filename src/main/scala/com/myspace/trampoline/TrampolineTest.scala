@@ -138,9 +138,9 @@ object FreeMonad {
       case x             => FlatMap(x, f)
     }
 
-    final def run(implicit S: Functor[S]): A = resume match {
+    final def run(implicit S: Functor[S], C: Copoint[S]): A = resume match {
       case Right(a) => a
-      case Left(k)  => S.get(S.map(k)(_.run))
+      case Left(k)  => C.get(S.map(k)(_.run))
     }
 
     final def resume(implicit S: Functor[S]): Either[S[Free[S, A]], A] = this match {
@@ -170,15 +170,19 @@ object FreeMonad {
 
   trait Functor[F[_]] {
     def map[A, B](m: F[A])(f: A => B): F[B]
-    def get[A](fa: F[A]): A
   }
 
   implicit val f0Functor = new Functor[Function0] {
     def map[A, B](a: () => A)(f: A => B): () => B = () => f(a())
-    def get[A](fa: () => A): A = fa()
   }
 
+  trait Copoint[F[_]] {
+    def get[A](fa: F[A]): A
+  }
 
+  implicit val f0Copoint = new Copoint[Function0] {
+    def get[A](fa: () => A): A = fa()
+  }
 }
 
 object TrampolineTest extends App {
