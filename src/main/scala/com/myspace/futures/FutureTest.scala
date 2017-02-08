@@ -27,7 +27,7 @@ object FutureTest extends App {
   }
 
   println("====")
-  val fibs1 = logDuration("sequential")((1 to 40) map fib)
+  val fibs1 = logDuration("sequential")((1 to 10) map fib)
   fibs1 foreach { i => print(i + " ") }
   println
   println("====")
@@ -39,17 +39,17 @@ object FutureTest extends App {
 
   val f1 = Future.sequence(l1)
 
-  var fibs2 = scala.collection.mutable.Seq
+  Await.ready(f1, 200 seconds)
 
-  f1 onComplete {
-    case Success(l) =>
-      println(s"--> ${l.toList}")
-    case Failure(e) => println(s"ERROR: ${e.getMessage}")
-  }
+  f1 onSuccess { case l => print(l.mkString(" ")) }
+//  f1 onComplete {
+//    case Success(l) =>
+//      println("-->" + l.mkString(" "))
+//      println(s"--> ${l foreach { i => print(s"$i ")} }")
+//    case Failure(e) => println(s"ERROR: ${e.getMessage}")
+//  }
 
-  Await.ready(f1, 20 seconds)
+  Await.ready(f1, 200 seconds)
 
-  println(fibs2)
-  println
   println("====")
 }

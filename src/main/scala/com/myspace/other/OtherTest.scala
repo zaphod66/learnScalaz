@@ -12,9 +12,10 @@ object OtherTest extends App {
 
   def onlyInt(v: Any): Option[Int] = condOpt(v) { case x: Int => x }
 
-  val s1 = Seq(1,2,3,4,5)
-  val s1p = s1.par
-  val s1pt = s1p.tasksupport
+  def hh: PartialFunction[Int, Float] = {
+    case i if i < 5 => 4F
+    case i if i < 10 && i >= 5 => 6F
+  }
 
   val t1 = Thing.point(1)
   val t2 = t1.flatMap(i => Thing.point(i + 1))
