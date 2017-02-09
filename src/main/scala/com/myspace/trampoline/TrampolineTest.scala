@@ -131,8 +131,11 @@ object MonadicTrampoline {
 
 object FreeMonad {
   import scala.language.higherKinds
+  import scala.language.reflectiveCalls
 
   sealed trait Free[S[+_], +A] {
+    final def map[B](f: A => B): Free[S, B] = flatMap(a => Done(f(a)))
+
     final def flatMap[B](f: A => Free[S, B]): Free[S, B] = this match {
       case FlatMap(a, g) => FlatMap(a, (x: Any) => g(x) flatMap f)
       case x             => FlatMap(x, f)
@@ -183,6 +186,50 @@ object FreeMonad {
   implicit val f0Copoint = new Copoint[Function0] {
     def get[A](fa: () => A): A = fa()
   }
+
+  // common data types as Free
+  type Pair[+A] = (A, A)
+  type BinTree[+A] = Free[Pair, A]
+
+  type Tree[+A] = Free[List, A]
+
+  type FreeList[A] = Free[({type l[+B] = (A, B)})#l, Unit]  // that is essentially a FreeMonoid
+  type FreeMonoid[A] = Free[({type λ[+α] = (A, α)})#λ, Unit]
+
+  // state monad as Free
+
+  sealed trait StateF[S, +A]
+  case class Get[S, A](f: S => A) extends StateF[S, A]
+  case class Put[S, A](s: S, a: A) extends StateF[S, A]
+
+  implicit def stateFFunctor[S] = new Functor[({type l[+B] = StateF[S, B]})#l] {
+    def map[A, B](m: StateF[S, A])(f: A => B): StateF[S, B] = m match {
+      case Get(g)    => Get((s: S) => f(g(s)))
+      case Put(s, a) => Put(s, f(a))
+    }
+  }
+
+  type FreeState[S, +A] = Free[({type λ[+α] = StateF[S,α]})#λ, A]
+
+  def pureState[S, A](a: A): FreeState[S, A] = Done[({type λ[+α] = StateF[S,α]})#λ, A](a)
+  def getState[S]: FreeState[S,S] = More[({type λ[+α] = StateF[S,α]})#λ, S](Get(s =>
+    Done[({type λ[+α] = StateF[S,α]})#λ, S](s)))
+  def setState[S](s: S): FreeState[S,Unit] = More[({type λ[+α] = StateF[S,α]})#λ, Unit](Put(s,
+    Done[({type λ[+α] = StateF[S,α]})#λ, Unit](())))
+
+  def eval[S, A](s: S, t: FreeState[S, A]): A = t.resume match {
+    case Left(Get(f))    => eval(s, f(s))
+    case Left(Put(n, a)) => eval(n, a)
+    case Right(a)        => a
+  }
+
+  def zipIndex[A](as: List[A]): List[(Int, A)] = eval(0, as.foldLeft(
+    pureState[Int, List[(Int, A)]](List.empty[(Int, A)])) {
+      (acc, a) => for {
+        xs <- acc
+        n  <- getState
+        _  <- setState(n + 1)
+      } yield (n, a)::xs }).reverse
 }
 
 object TrampolineTest extends App {
@@ -281,6 +328,13 @@ object TrampolineTest extends App {
 
     println(s"l1: ${l1.size}: even = $b1e, odd = $b1o")
     println(s"l2: ${l2.size}: even = $b2e, odd = $b2o")
+
+    val z3 = try { zipIndex(List.fill(10)('a')) }    catch { case _: Throwable => List.empty[(Int, Char)] }
+    println(s"z3: $z3")
+
+    val z4 = try { zipIndex(List.fill(10000)('b')) } catch { case _: Throwable => List.empty[(Int, Char)] }
+    println(s"z4: $z4")
+
   }
 
   testFirst
