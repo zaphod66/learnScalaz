@@ -137,7 +137,11 @@ object FreeMonad {
     final def map[B](f: A => B): Free[S, B] = flatMap(a => Done(f(a)))
 
     final def flatMap[B](f: A => Free[S, B]): Free[S, B] = this match {
-      case FlatMap(a, g) => FlatMap(a, (x: Any) => g(x) flatMap f)
+//    case FlatMap(a, g) => FlatMap(a, (x: Any) => g(x) flatMap f)
+      case FlatMap(a, g) => {
+        val h = (x: Any) => g(x) flatMap f
+        FlatMap(a, h)
+      }
       case x             => FlatMap(() => x, f)
     }
 
@@ -152,7 +156,10 @@ object FreeMonad {
       case a FlatMap f => a() match {
         case Done(a)     => f(a).resume
         case More(k)     => Left(S.map(k)(_ flatMap f))
-        case b FlatMap g => b().flatMap((x: Any) => g(x) flatMap f).resume
+        case b FlatMap g => {
+          val h = (x: Any) => g(x) flatMap f
+          b().flatMap(h).resume
+        }
       }
     }
 
@@ -335,6 +342,7 @@ object TrampolineTest extends App {
     val z4 = try { zipIndex(List.fill(10000)('b')) } catch { case _: Throwable => List.empty[(Int, Char)] }
     println(s"z4: $z4")
 
+    zipIndex(List.fill(10000)('b'))
   }
 
   testFirst
