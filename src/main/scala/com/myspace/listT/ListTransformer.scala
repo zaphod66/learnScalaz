@@ -115,7 +115,7 @@ object ListTransformer extends App {
     val toli3 = toli1 ++ toli2
     val toli4 = for {
       i <- toli3
-    } yield i * 2
+    } yield s"-(${i * 2})-"
 
     println(s"toli1 = ${toli1.run.run.run}")
     println(s"toli2 = ${toli2.run.run.run}")
