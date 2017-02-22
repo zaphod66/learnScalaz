@@ -341,8 +341,6 @@ object TrampolineTest extends App {
 
     val z4 = try { zipIndex(List.fill(10000)('b')) } catch { case _: Throwable => List.empty[(Int, Char)] }
     println(s"z4: $z4")
-
-    zipIndex(List.fill(10000)('b'))
   }
 
   testFirst
