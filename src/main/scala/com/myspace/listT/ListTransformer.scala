@@ -52,21 +52,81 @@ class Reporter extends ReportModule {
 }
 
 object ListTransformer extends App {
-  println("ListTransformer")
+  object Transform0 {
+    val reporter = new Reporter
 
-  val reporter = new Reporter
+    val result = reporter.report()
 
-  val result = reporter.report()
+    println(s"result: $result")
 
-  println(s"result: $result")
+    val ass = List(List(1, 2), List(3, 4))
 
-  val ass = List(List(1, 2), List(3, 4))
+    val ttt = ListT.fromList(ass)
 
-  val ttt = ListT.fromList(ass)
+    import Scalaz._
 
-  import Scalaz._
+    println(s"ttt            = $ttt")
+    println(s"ttt.run        = ${ttt.run}")
+    println(s"ttt.headOption = ${ttt.headOption}")
+  }
 
-  println(s"ttt            = $ttt")
-  println(s"ttt.run        = ${ttt.run}")
-  println(s"ttt.headOption = ${ttt.headOption}")
+  object Transform1 {
+    import Scalaz._
+
+    val ol1 = new ListT[Option, Int](Some(List(1, 2, 3)))
+    val ol2 = for {
+      i <- ol1
+    } yield i * 2
+
+    println(s"ol1: ${ol1.run}")
+    println(s"ol2: ${ol2.run}")
+  }
+
+  object Transform2 {
+    import scalaz.concurrent._
+    import Scalaz._
+
+    val l1 = List(1, 2, 3)
+    val ol1 = new ListT[Option, Int](Some(List(1, 2, 3)))
+    val to1 = new OptionT[Task, Int](Task(Some(1)))
+
+    val tol1 = ol1.point[Task]
+
+    val tol2 = for {
+      ol <- tol1
+    } yield for {
+      i <- ol
+    } yield i * 2
+
+    println(s"ol1: ${tol1.run.run}")
+    println(s"ol2: ${tol2.run.run}")
+
+    type TaskOption[T] = OptionT[Task, T]
+    val to2 = 1.point[TaskOption]
+    val to3 = for {
+      i <- to1
+    } yield s"-(${i * 2})-"
+
+    println(s"to3: ${to3.run.run}")
+
+    type TaskOptionList[T] = ListT[TaskOption, T]
+    val toli1 = 1.point[TaskOptionList]
+    val toli2 = 2.point[TaskOptionList]
+    val toli3 = toli1 ++ toli2
+    val toli4 = for {
+      i <- toli3
+    } yield i * 2
+
+    println(s"toli1 = ${toli1.run.run.run}")
+    println(s"toli2 = ${toli2.run.run.run}")
+    println(s"toli3 = ${toli3.run.run.run}")
+    println(s"toli4 = ${toli4.run.run.run}")
+
+  }
+
+  println("MonadTransformer")
+
+//Transform0
+  Transform1
+  Transform2
 }
