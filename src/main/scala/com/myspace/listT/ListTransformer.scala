@@ -139,6 +139,9 @@ object ListTransformer extends App {
     println(s"to9: ${to9.run.run}")
 
     type TaskOptionList[T] = ListT[TaskOption, T]
+    object TaskOptionList {
+      def apply[T](ts: List[T]) = ListT[TaskOption, T](OptionT[Task, List[T]](Task(Option(ts))))
+    }
 
     val toli1 = 1.point[TaskOptionList]
     val toli2 = 2.point[TaskOptionList]
@@ -146,11 +149,15 @@ object ListTransformer extends App {
     val toli4 = toli3 map { _ * 2 }
     val toli5 = ListT[TaskOption, Int](OptionT[Task, List[Int]](Task(Option(List(1, 2, 3, 4)))))
     val toli6 = toli5 map { i => s"-<$i>-" }
+    val toli7 = TaskOptionList(List('a', 'b', 'c', 'd'))
+    val toli8 = toli7 map { c => s"-$c-" }
 
     println(s"toli3 = ${toli3.run.run.run}")
     println(s"toli4 = ${toli4.run.run.run}")
     println(s"toli5 = ${toli5.run.run.run}")
     println(s"toli6 = ${toli6.run.run.run}")
+    println(s"toli7 = ${toli7.run.run.run}")
+    println(s"toli8 = ${toli8.run.run.run}")
   }
 
   println("MonadTransformer")
