@@ -10,9 +10,12 @@ val scalazVersion = "7.1.3"
 
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % scalazVersion,
+  "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
   "org.scalaz" %% "scalaz-effect" % scalazVersion,
   "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
-  "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test"
+  "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
+  "com.storm-enroute" %% "scalameter-core" % "0.6",
+  "com.storm-enroute" %% "scalameter" % "0.6" % "test"
 )
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"

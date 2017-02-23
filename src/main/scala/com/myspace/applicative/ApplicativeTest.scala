@@ -10,9 +10,17 @@ object ApplicativeTest extends App {
   import scalaz.syntax.applicative._
 
   implicit val tryApplicative = new Applicative[Try] {
-    def point[A](a: =>  A): Try[A] = Success(a)
-    def ap[A, B](x: => scala.util.Try[A])(f: => scala.util.Try[A => B]) = f.flatMap(ff => x.map(ff))
+    def point[A](a: => A): Try[A] = Success(a)
+    def ap[A, B](a: => Try[A])(f: => Try[A => B]) = f.flatMap(ff => a.map(ff))
   }
+
+//  implicit val tryApplicative = new Applicative[Try] {
+//    override def point[A](a: => A): Try[A] = Success(a)
+//    override def ap[A, B](fa: => Try[A])(f: => Try[(A) => B]): Try[B] = fa match {
+//      case Failure(e) => Failure(e)
+//      case Success(a) => f.map(_(a))
+//    }
+//  }
 
   implicit def successOrMessage[A](ma: Option[A], message: String): Try[A] = {
     ma match {
