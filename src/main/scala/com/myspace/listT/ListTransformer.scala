@@ -102,26 +102,38 @@ object ListTransformer extends App {
     println(s"ol2: ${tol2.run.run}")
 
     type TaskOption[T] = OptionT[Task, T]
-    val to2 = 1.point[TaskOption]
-    val to3 = for {
-      i <- to1
-    } yield s"-(${i * 2})-"
 
+    val to2 = 1.point[TaskOption]
+    val to3 = to1 map { i => s"-(${i * 2})-" }
+    val to4 = OptionT[Task, Int](Task(Option(4)))
+    val to5 = to4 map { i => s"-(${i * 2})-" }
+    val to6 = OptionT[Task, String](Task(Option("Monad")))
+    val to7 = to6 map { i => s"-(${i * 2})-" }
+    val to8 = OptionT[Task, String](none[String].point[Task])
+    val to9 = to8 map { i => s"-(${i * 2})-" }
+
+    println(s"to2: ${to2.run.run}")
     println(s"to3: ${to3.run.run}")
+    println(s"to4: ${to4.run.run}")
+    println(s"to5: ${to5.run.run}")
+    println(s"to6: ${to6.run.run}")
+    println(s"to7: ${to7.run.run}")
+    println(s"to8: ${to8.run.run}")
+    println(s"to9: ${to9.run.run}")
 
     type TaskOptionList[T] = ListT[TaskOption, T]
+
     val toli1 = 1.point[TaskOptionList]
     val toli2 = 2.point[TaskOptionList]
     val toli3 = toli1 ++ toli2
-    val toli4 = for {
-      i <- toli3
-    } yield s"-(${i * 2})-"
+    val toli4 = toli3 map { _ * 2 }
+    val toli5 = ListT[TaskOption, Int](OptionT[Task, List[Int]](Task(Option(List(1, 2, 3, 4)))))
+    val toli6 = toli5 map { i => s"-<$i>-" }
 
-    println(s"toli1 = ${toli1.run.run.run}")
-    println(s"toli2 = ${toli2.run.run.run}")
     println(s"toli3 = ${toli3.run.run.run}")
     println(s"toli4 = ${toli4.run.run.run}")
-
+    println(s"toli5 = ${toli5.run.run.run}")
+    println(s"toli6 = ${toli6.run.run.run}")
   }
 
   println("MonadTransformer")
