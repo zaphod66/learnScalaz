@@ -9,9 +9,20 @@ object ApplicativeTest extends App {
   import scalaz.Applicative
   import scalaz.syntax.applicative._
 
+  implicit class RichTry[A](t: Try[A]) {
+    def zip[B](that: Try[B]): Try[(A, B)] = {
+      (this.asInstanceOf[Try[A]], that) match {
+        case (Success(a), Success(b)) => Success((a, b))
+        case (Success(_), Failure(e)) => Failure(e)
+        case (Failure(e), Success(_)) => Failure(e)
+        case (Failure(e), Failure(_)) => Failure(e)
+      }
+    }
+  }
+
   implicit val tryApplicative = new Applicative[Try] {
     def point[A](a: => A): Try[A] = Success(a)
-    def ap[A, B](a: => Try[A])(f: => Try[A => B]) = f.flatMap(ff => a.map(ff))
+    def ap[A, B](fa: => Try[A])(f: => Try[A => B]) = (f zip fa) map { case (fn, a) => fn(a) }
   }
 
 //  implicit val tryApplicative = new Applicative[Try] {

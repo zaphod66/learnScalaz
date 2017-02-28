@@ -46,7 +46,7 @@ class Reporter[Raw, Frm](generate: () => List[Raw], f: Raw => Frm) extends Repor
 }
 
 object ListTransformer extends App {
-  object Transform0 {
+  object Simple {
     type Meta = String
     type Txns = Seq[Transaction]
     type Raw = (Meta, Txns)
@@ -61,7 +61,7 @@ object ListTransformer extends App {
     val result = reporter.report().run
   }
 
-  object tuple {
+  object Tuple {
     type Meta = (String, Int)
     type Raw = (Meta, Seq[Transaction])
     type Frm = (Meta, String)
@@ -162,7 +162,7 @@ object ListTransformer extends App {
 
   println("MonadTransformer")
 
-//Transform0
+//Tuple
   Transform1
   Transform2
 }
