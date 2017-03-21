@@ -1,13 +1,26 @@
 package com.myspace.applicative
 
 import scala.util.{Failure, Success, Try}
-import scalaz.Validation
+import scalaz.{Validation, Semigroup}
 
 import scala.language.implicitConversions
 
 object ApplicativeTest extends App {
   import scalaz.Applicative
   import scalaz.syntax.applicative._
+
+
+  implicit def trySemigroup[A: Semigroup] = new Semigroup[Try[A]] {
+
+    implicit def a_append = implicitly[Semigroup[A]].append _
+
+    override def append(f1: Try[A], f2: => Try[A]): Try[A] = (f1, f2) match {
+      case (Success(a), Success(b)) => Success(a_append(a, b))
+      case (Success(_), Failure(e)) => Failure(e)
+      case (Failure(e), Success(_)) => Failure(e)
+      case (Failure(e), Failure(_)) => Failure(e)
+    }
+  }
 
   implicit class RichTry[A](t: Try[A]) {
     def zip[B](that: Try[B]): Try[(A, B)] = {

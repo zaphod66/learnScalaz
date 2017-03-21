@@ -82,4 +82,16 @@ object StackedMonads extends App {
   val i3 = Await.result(s3.v, Duration.Inf)
 
   println(s"i1 = $i1, i2 = $i2, i3 = $i3")
+
+  //////////
+
+  import scalaz._, Scalaz._
+
+  val fo = OptionT[List, Int](List(Some(1), Some(2), None, Some(4)))
+
+  val ll = for {
+    k <- fo
+  } yield k + 1
+
+  ll.run foreach println
 }
