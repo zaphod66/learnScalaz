@@ -56,9 +56,6 @@ object IoTest extends App {
     converter.run
   }
 
-  object Factorial {
-
-  }
   FirstStep
 
   Converter
