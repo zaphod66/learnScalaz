@@ -16,7 +16,12 @@ object ExprTest extends App {
 
   val e6 = BinOp("/", Number(1), e5)
 
+  val e7 = BinOp("/", Number(1),
+                      UnOp("Sqrt", BinOp("-", Number(1),
+                        BinOp("/", BinOp("*", Var("v"), Var("v")),
+                                   BinOp("*", Var("c"), Var("c"))))))
+
   def show(e: Expr): Unit = println(f.format(e) + "\n\n")
 
-  List(e1, e2, e3, e5, e6) foreach show
+  List(e6, e7) foreach show
 }
