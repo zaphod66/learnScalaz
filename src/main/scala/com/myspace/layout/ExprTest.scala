@@ -12,7 +12,11 @@ object ExprTest extends App {
 
   val e4 = BinOp("/", BinOp("/", Number(1), Number(2)), Number(3))
 
+  val e5 = BinOp("*", e3, e4)
+
+  val e6 = BinOp("/", Number(1), e5)
+
   def show(e: Expr): Unit = println(f.format(e) + "\n\n")
 
-  List(e1, e2, e3, e4) foreach show
+  List(e1, e2, e3, e5, e6) foreach show
 }
