@@ -17,7 +17,9 @@ object ExprParser extends JavaTokenParsers {
     }
   }
 
-  lazy val factor: Parser[Expr] = "(" ~> expr <~ ")" | number
+  lazy val factor: Parser[Expr] = "(" ~> expr <~ ")" | number | variable
+
+  lazy val variable: Parser[Expr] = ".".r ^^ { s => Var(s) }
 
   lazy val number: Parser[Expr] = floatingPointNumber ^^ { t => Number(t.toDouble)}
 
