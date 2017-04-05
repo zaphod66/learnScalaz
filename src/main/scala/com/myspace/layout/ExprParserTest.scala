@@ -47,12 +47,13 @@ object ExprParserTest extends App {
   val m1 = Map("x" -> 1.0)
   val m2 = Map("x" -> 2.0)
 
-  println(s"$s1 = $r1 = ${eval(r1)}")
-  println(s"$s2 = $r2 = ${eval(r2)}")
-  println(s"$s3 = $r3 = ${eval(r3)}")
-  println(s"$s4 = $r4 = ${eval(r4)}")
-  println(s"$s5 = $r5 = ${eval(r5, m1)}")
-  println(s"$s5 = $r5 = ${eval(r5, m2)}")
+  println(s"$s1 = ${r1.get} = ${eval(r1)}")
+  println(s"$s2 = ${r2.get} = ${eval(r2)}")
+  println(s"$s3 = ${r3.get} = ${eval(r3)}")
+  println(s"$s4 = ${r4.get} = ${eval(r4)}")
+  println(s"$s5 = ${r5.get} = ${eval(r5)}")
+  println(s"$s5 = ${r5.get} = ${eval(r5, m1)}")
+  println(s"$s5 = ${r5.get} = ${eval(r5, m2)}")
 
   def show(e: Expr): Unit = println(f.format(e) + "\n\n")
 
