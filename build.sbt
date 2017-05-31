@@ -8,7 +8,21 @@ resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 
 val scalazVersion = "7.1.3"
 
+val akkaVersion = "2.4.8"
+
 libraryDependencies ++= Seq(
+  "com.typesafe.akka"  %% "akka-actor"                    % akkaVersion,
+  "com.typesafe.akka"  %% "akka-persistence"              % akkaVersion,
+  "com.typesafe.akka"  %% "akka-stream"                   % akkaVersion,
+  "com.typesafe.akka"  %% "akka-persistence"              % akkaVersion,
+  "com.typesafe.akka"         %%  "akka-persistence-query-experimental" % akkaVersion,
+  "org.iq80.leveldb"          % "leveldb"                 % "0.7",
+  "org.fusesource.leveldbjni" % "leveldbjni-all"          % "1.8",
+
+  "commons-io"                %   "commons-io"                          % "2.4",
+
+  "com.typesafe.scala-logging" %% "scala-logging-slf4j"   % "2.1.2",
+  "ch.qos.logback"   % "logback-classic"                  % "1.1.3",
   "org.scalaz" %% "scalaz-core" % scalazVersion,
   "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
   "org.scalaz" %% "scalaz-effect" % scalazVersion,
