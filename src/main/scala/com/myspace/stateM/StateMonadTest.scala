@@ -17,10 +17,10 @@ object StateMonadTest extends App {
     def numberMy(seed: Int): (Int, Tree[(A, Int)]) = this match {
       case Leaf(a)      => (seed + 1, Leaf(a, seed))
       case Branch(l, r) =>
-        val (sl, ln) = l numberMy seed
-        val (sr, rn) = r numberMy sl
+        val (seedL, ln) = l numberMy seed
+        val (seedR, rn) = r numberMy seedL
 
-        (sr, Branch(ln, rn))
+        (seedR, Branch(ln, rn))
     }
 
     def numberSM: State[Int, Tree[(A, Int)]] = this match {
