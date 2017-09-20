@@ -1,7 +1,7 @@
 package com.myspace.layout
 
 object ExprTest extends App {
-  val f = new ExprFormatter
+  val f = ExprFormatter
 
   val e1 = BinOp("*", BinOp("/", Number(1), Number(2)),
                       BinOp("+", Var("x"), Number(1)))

@@ -23,5 +23,5 @@ object ExprParser extends JavaTokenParsers {
 
   lazy val number: Parser[Expr] = floatingPointNumber ^^ { t => Number(t.toDouble)}
 
-  def parse(s: String) = parseAll(expr, s)
+  def parse(s: String): ParseResult[Expr] = parseAll(expr, s)
 }

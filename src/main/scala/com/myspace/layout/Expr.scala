@@ -6,7 +6,7 @@ case class Number(num: Double) extends Expr
 case class UnOp(op: String, arg: Expr) extends Expr
 case class BinOp(op: String, l: Expr, r: Expr) extends Expr
 
-class ExprFormatter {
+object ExprFormatter {
   private val opGroups = Array(
     Set("|", "||"),
     Set("&", "&&"),
