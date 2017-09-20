@@ -3,6 +3,7 @@ package com.myspace.layout
 import ExprParser._
 
 import scalaz.{-\/, \/, \/-}
+//import scalaz._, Scalaz._
 
 object ExprParserTest extends App {
 
@@ -11,21 +12,25 @@ object ExprParserTest extends App {
   }
 
   def eval(parseResult: ParseResult[Expr], env: Map[String, Double]): String \/ Double = {
-    def go(expr: Expr): Double = expr match {
-      case Number(n)          => n
-      case Var(name)          => env.getOrElse(name, 0.0)
-      case UnOp("-", e)       => -1 * go(e)
+    type GoResult = String \/ Double
+
+    import scalaz.syntax.applicative._
+
+    def go(expr: Expr): String \/ Double = expr match {
+      case Number(n)          => \/-(n)
+      case Var(name)          => env.get(name).fold[String \/ Double](-\/(s"<$name> not found"))(v => \/-(v))
+      case UnOp("-", e)       => go(e).map(_ * -1)
       case UnOp("+", e)       => go(e)
-      case UnOp(_, _)         => 0.0
-      case BinOp("+", e1, e2) => go(e1) + go(e2)
-      case BinOp("-", e1, e2) => go(e1) - go(e2)
-      case BinOp("*", e1, e2) => go(e1) * go(e2)
-      case BinOp("/", e1, e2) => go(e1) / go(e2)
-      case BinOp(_, _, _)     => 0.0
+      case UnOp(op, _)        => -\/(s"unknown operator <$op>")
+      case BinOp("+", e1, e2) => (go(e1) |@| go(e2)) { _ + _ }
+      case BinOp("-", e1, e2) => (go(e1) |@| go(e2)) { _ - _ }
+      case BinOp("*", e1, e2) => (go(e1) |@| go(e2)) { _ * _ }
+      case BinOp("/", e1, e2) => (go(e1) |@| go(e2)) { _ / _ }
+      case BinOp(op, _, _)    => -\/(s"unknown operator <$op>")
     }
 
     parseResult match {
-      case Success(result, _) => \/-(go(result))
+      case Success(result, _) => go(result)
       case NoSuccess(msg, _)  => -\/(msg)
     }
   }
