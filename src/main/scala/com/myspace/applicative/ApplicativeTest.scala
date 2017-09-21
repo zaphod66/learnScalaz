@@ -1,7 +1,7 @@
 package com.myspace.applicative
 
 import scala.util.{Failure, Success, Try}
-import scalaz.Validation
+import scalaz.{Validation, Semigroup}
 
 import scala.language.implicitConversions
 
@@ -9,9 +9,33 @@ object ApplicativeTest extends App {
   import scalaz.Applicative
   import scalaz.syntax.applicative._
 
+
+  implicit def trySemigroup[A: Semigroup] = new Semigroup[Try[A]] {
+
+    implicit def a_append = implicitly[Semigroup[A]].append _
+
+    override def append(f1: Try[A], f2: => Try[A]): Try[A] = (f1, f2) match {
+      case (Success(a), Success(b)) => Success(a_append(a, b))
+      case (Success(_), Failure(e)) => Failure(e)
+      case (Failure(e), Success(_)) => Failure(e)
+      case (Failure(e), Failure(_)) => Failure(e)
+    }
+  }
+
+  implicit class RichTry[A](t: Try[A]) {
+    def zip[B](that: Try[B]): Try[(A, B)] = {
+      (this.asInstanceOf[Try[A]], that) match {
+        case (Success(a), Success(b)) => Success((a, b))
+        case (Success(_), Failure(e)) => Failure(e)
+        case (Failure(e), Success(_)) => Failure(e)
+        case (Failure(e), Failure(_)) => Failure(e)
+      }
+    }
+  }
+
   implicit val tryApplicative = new Applicative[Try] {
     def point[A](a: => A): Try[A] = Success(a)
-    def ap[A, B](a: => Try[A])(f: => Try[A => B]) = f.flatMap(ff => a.map(ff))
+    def ap[A, B](fa: => Try[A])(f: => Try[A => B]) = (f zip fa) map { case (fn, a) => fn(a) }
   }
 
 //  implicit val tryApplicative = new Applicative[Try] {

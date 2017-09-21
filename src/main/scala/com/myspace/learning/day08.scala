@@ -58,7 +58,7 @@ object day08 extends App {
     case (x :: y :: ys, "*") => ((y * x) :: ys).point[List].flatten
     case (x :: y :: ys, "+") => ((y + x) :: ys).point[List].flatten
     case (x :: y :: ys, "-") => ((y - x) :: ys).point[List].flatten
-    case (xs, numStr)        => numStr.parseInt.toList.map(x => x.toDouble :: xs).flatten
+    case (xs, numStr)        => numStr.parseInt.toList.flatMap(x => x.toDouble :: xs)
   }
 
 //  def evalRPN3(s: String) = for {
