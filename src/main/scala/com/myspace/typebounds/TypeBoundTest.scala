@@ -9,7 +9,8 @@ object TypeBoundTest extends App {
     def smaller: T = if (f.compareTo(s) <= 0) f else s
   }
 
-  println(Pair1("Fred", "Brooks").smaller)
+  val p11 = Pair1("Fred", "Brooks")
+  println(s"""p11.smaller: ${p11.smaller}""")
 
   class Person(name: String, age: Int) { override def toString = s"Person($name, $age)" }
   class Student(name: String, age: Int, semester: Int) extends Person(name, age) {
@@ -22,11 +23,11 @@ object TypeBoundTest extends App {
     def replaceFirst2[R >: T](nf: R) = Pair2(nf, s)
   }
 
-  val p211 = Pair2(new Student("f", 21, 1), new Student("s", 22, 2))  // Pair[Student]
-  //  val p212 = p214.replaceFirst1(new Person("f", 21))  --> compile error
-  val p213 = p211.replaceFirst2(new Person("f", 21))  // Pair[Person]
+  val p21 = Pair2(new Student("f", 21, 1), new Student("s", 22, 2))  // Pair[Student]
+  //  val p22 = p214.replaceFirst1(new Person("f", 21))  --> compile error
+  val p23 = p21.replaceFirst2(new Person("f", 21))  // Pair[Person]
 
-  println(p213)
+  println(s"p23: $p23")
 
   // 17.4 View Bounds (deprecated !! It's better to replace them with implicit parameters
   // T <% S View Bound (There is an implicit conversion from T to S)
@@ -40,4 +41,8 @@ object TypeBoundTest extends App {
     }
   }
 
+  val p41 = Pair4(4, 5)
+  val p42 = Pair4("Fred", "Brooks")
+  println(s"p41.smaller: ${p41.smaller}")
+  println(s"p42.smaller: ${p42.smaller}")
 }
