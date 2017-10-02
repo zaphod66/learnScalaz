@@ -8,11 +8,16 @@ object MyStuff {
 
     def flatMap[B](f: A => Reader[R, B]): Reader[R, B] =
       Reader(r => f(run(r)).run(r))
+
   }
 
   object Reader {
     def get[A]: Reader[A, A] = Reader(a => a)
     def pure[R, A](a: => A): Reader[R, A] = Reader(_ => a)
+
+    def sequence[R, A](list: TraversableOnce[Reader[R, A]]): Reader[R, TraversableOnce[A]] = {
+      Reader(r => for { l <- list } yield l.run(r))
+    }
   }
 
 }
@@ -271,5 +276,29 @@ object ReaderTest extends App {
     Repo.repo foreach println
   }
 
+  object ReaderSequenceApp {
+    import MyStuff._
+
+    val fns = 1 to 10 map { i => (x: Int) => x + i }
+    val rds = fns map { f => Reader(f) }
+    val rdr = Reader.sequence(rds)
+    val res = rdr.run(3).toList
+
+    println(s"res: $res")
+
+    val reader1 = Reader((i: Int) => i * 3)
+    val reader2 = Reader((i: Int) => i + 2)
+
+    val readers = List(reader1, reader2)
+
+    val reader3 = Reader.sequence(readers)
+
+    val result3 = reader3.run(3).toList
+
+    println(s"re3: $result3")
+  }
+
   ReaderInjectionApp
+  println("--------")
+  ReaderSequenceApp
 }
