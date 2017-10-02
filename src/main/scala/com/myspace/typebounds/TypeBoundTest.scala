@@ -27,6 +27,7 @@ object TypeBoundTest extends App {
   //  val p22 = p214.replaceFirst1(new Person("f", 21))  --> compile error
   val p23 = p21.replaceFirst2(new Person("f", 21))  // Pair[Person]
 
+  println(s"p21: $p21")
   println(s"p23: $p23")
 
   // 17.4 View Bounds (deprecated !! It's better to replace them with implicit parameters
