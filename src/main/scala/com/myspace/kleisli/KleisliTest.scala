@@ -20,15 +20,39 @@ object KleisliTest extends App {
       z <- double(y)
     } yield z
 
+  val o1: Int => String = i => i.toString
+  val o2: String => Int = s => s.toInt
+  val o3: Int => Double = i => i.toDouble * 3.14
+
+  val o4 = o1 andThen o2 andThen o3
+
+  val f1: Int => Option[String] = i => Some(i.toString)
+  val f2: String => Option[Int] = s => Some(s.toInt)
+  val f3: Int => Option[Double] = i => Some(i.toDouble * 3.14)
+
+  def f4: Int => Option[Double] = i => for {
+    x <- f1(i)
+    y <- f2(x)
+    z <- f3(y)
+  } yield z
+
+  def f5: Int => Option[Double] = kleisli(f1) andThen kleisli(f2) andThen kleisli(f3)
+  def f6 = kleisli(f1) >=> kleisli(f2) >=> kleisli(f3)
+  def f7 = kleisli(f1) >==> f2 >==> f3
+
   // Kleisli!
   val funky1 = Kleisli(toStr) >=> Kleisli(toInt) >=> Kleisli(double)
-  val funky2 = kleisli(toStr) >=> kleisli(toInt) >=> kleisli(double)
-  val funky3 = kleisli(toStr) >==> toInt >==> double
+  val funky2 = Kleisli(toStr) >=> Kleisli(toInt) >=> Kleisli(double)
+  val funky3 = Kleisli(toStr) >==> toInt >==> double
 
   println(oldSchool(2))
   println(funky1(2))
   println(funky2(2))
   println(funky3(2))
+  println(f4(2))
+  println(f5(2))
+  println(f6(2))
+  println(f7(2))
 
   /////////////////////////////////////////////////////////////////////
   // from scalaz examples
