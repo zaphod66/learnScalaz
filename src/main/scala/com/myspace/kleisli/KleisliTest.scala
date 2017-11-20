@@ -20,11 +20,27 @@ object KleisliTest extends App {
       z <- double(y)
     } yield z
 
+  // Kleisli!
+  val funky1 = Kleisli(toStr) >=> Kleisli(toInt) >=> Kleisli(double)
+  val funky2 = Kleisli(toStr) >=> Kleisli(toInt) >=> Kleisli(double)
+  val funky3 = Kleisli(toStr) >==> toInt >==> double
+
+//  println(oldSchool(2))
+//  println(funky1(2))
+//  println(funky2(2))
+//  println(funky3(2))
+
+  ///////////////////////////////////////////////////////////////////
+
+  // function composition
+
   val o1: Int => String = i => i.toString
   val o2: String => Int = s => s.toInt
   val o3: Int => Double = i => i.toDouble * 3.14
 
   val o4 = o1 andThen o2 andThen o3
+
+  // Some functions that take simple types and return higher-kinded types
 
   val f1: Int => Option[String] = i => Some(i.toString)
   val f2: String => Option[Int] = s => Some(s.toInt)
@@ -36,19 +52,11 @@ object KleisliTest extends App {
     z <- f3(y)
   } yield z
 
-  def f5: Int => Option[Double] = kleisli(f1) andThen kleisli(f2) andThen kleisli(f3)
+  def f5 = kleisli(f1) andThen kleisli(f2) andThen kleisli(f3)
   def f6 = kleisli(f1) >=> kleisli(f2) >=> kleisli(f3)
   def f7 = kleisli(f1) >==> f2 >==> f3
+  def f8 = kleisli(f3) <=< kleisli(f2) <=< kleisli(f1)
 
-  // Kleisli!
-  val funky1 = Kleisli(toStr) >=> Kleisli(toInt) >=> Kleisli(double)
-  val funky2 = Kleisli(toStr) >=> Kleisli(toInt) >=> Kleisli(double)
-  val funky3 = Kleisli(toStr) >==> toInt >==> double
-
-  println(oldSchool(2))
-  println(funky1(2))
-  println(funky2(2))
-  println(funky3(2))
   println(f4(2))
   println(f5(2))
   println(f6(2))
