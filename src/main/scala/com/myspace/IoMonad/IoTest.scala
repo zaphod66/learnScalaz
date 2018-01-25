@@ -9,7 +9,7 @@ sealed trait IO[A] { self =>
   def flatMap[B](f: A => IO[B]): IO[B] = new IO[B] { def run = f(self.run).run }
 
   def ++(io: IO[Unit]): IO[Unit] = new IO[Unit] {
-    def run = { self.run; io.run }
+    def run: Unit = { self.run; io.run }
   }
 
 }
@@ -27,16 +27,16 @@ object IO extends Monad[IO] {
 
 object IoTest extends App {
   object FirstStep {
-    def printFrame(msg: String) = {
-      def printLine(s: String): IO[Unit] = new IO[Unit] { def run = println(s) }
-      def printDeco(s: String): IO[Unit] = new IO[Unit] { def run = println(s"|$s|") }
+    def printFrame(msg: String): IO[Unit] = {
+      def printLine(s: String): IO[Unit] = new IO[Unit] { def run: Unit = println(s) }
+      def printDeco(s: String): IO[Unit] = new IO[Unit] { def run: Unit = println(s"|$s|") }
 
       val line = List.fill(msg.length)('-').mkString("+", "", "+")
       printLine(line) ++ printDeco(msg) ++ printLine(line)
     }
 
-    val c1 = printFrame("Plus")
-    val c2 = printFrame("Quamperfekt")
+    private val c1 = printFrame("Plus")
+    private val c2 = printFrame("Quamperfekt")
 
     c1.run
     c2.run
@@ -52,11 +52,9 @@ object IoTest extends App {
       d <- ReadLine.map(_.toDouble)
       _ <- PrintLine(s"$d Fahrenheit = ${fahrenheitToCelsius(d)} Celsius.")
     } yield ()
-
-    converter.run
   }
 
   FirstStep
 
-  Converter
+  Converter.converter.run
 }
