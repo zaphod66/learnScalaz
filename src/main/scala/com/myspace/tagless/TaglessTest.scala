@@ -8,6 +8,11 @@ import scala.language.higherKinds
 
 object TaglessTest extends App {
 
+  def timed[A](f: => A): (A, Long) = {
+    val start = System.currentTimeMillis()
+    (f, System.currentTimeMillis() - start)
+  }
+
   object Basic {
 
     trait Language[Wrapper[_]] {
@@ -22,8 +27,8 @@ object TaglessTest extends App {
       def toString(v: Wrapper[Int]): Wrapper[String]
     }
 
-    trait ScalaToLanguageBridge[ScalaValue] {
-      def apply[Wrapper[_]](L: Language[Wrapper]): Wrapper[ScalaValue]
+    trait ScalaToLanguageBridge[A] {
+      def apply[Wrapper[_]](L: Language[Wrapper]): Wrapper[A]
     }
 
     def buildComplexExpression(t: String, a: Int, b: Int): ScalaToLanguageBridge[String] = new ScalaToLanguageBridge[String] {
@@ -36,7 +41,21 @@ object TaglessTest extends App {
 
     val expression: ScalaToLanguageBridge[String] = buildComplexExpression("Result is ", 10, 1)
 
-    type NoWrap[ScalaValue] = ScalaValue
+    def buildIncExpr(n: Int): ScalaToLanguageBridge[Int] = new ScalaToLanguageBridge[Int] {
+      override def apply[Wrapper[_]](L: Language[Wrapper]): Wrapper[Int] =
+      {
+        def go(n: Int, expr: Wrapper[Int]): Wrapper[Int] = {
+          if (n == 0)
+            expr
+          else
+            go(n - 1, L.increment(expr))
+        }
+
+        go(n, L.number(0))
+      }
+    }
+
+    type NoWrap[A] = A
 
     val interpreterNoWrap: Language[NoWrap] = new Language[NoWrap] {
       override def number(v: Int): NoWrap[Int] = v
@@ -177,13 +196,12 @@ object TaglessTest extends App {
 
   println("-- Tagless final pattern --")
 
+  import scala.concurrent.duration._
+
   val n = Basic.expression.apply(Basic.interpreterNoWrap)
   val o = Basic.expression.apply(Basic.interpreterOption)
   val p = Basic.expression.apply(Basic.interpreterPrettyPrint)
-  val t = Basic.expression.apply(Basic.interpreterTask)
-
-  import scala.concurrent.duration._
-
+  val t = Basic.expression.apply(Basic.interpreterTask).run
   val aF = Basic.expression.apply(Basic.interpreterFuture)
   val a = Await.result(aF, 1.second)
 
@@ -191,7 +209,20 @@ object TaglessTest extends App {
   println(s"expression: $o")
   println(s"expression: $p")
   println(s"expression: $a")
-  println(s"expression: ${t.run}")
+  println(s"expression: $t")
+
+  val inc5 = Basic.buildIncExpr(10)
+  val inc5n = timed(inc5.apply(Basic.interpreterNoWrap))
+  val inc5o = timed(inc5.apply(Basic.interpreterOption))
+  val inc5p = timed(inc5.apply(Basic.interpreterPrettyPrint))
+  val inc5t = timed(inc5.apply(Basic.interpreterTask).run)
+  val inc5f = timed(Await.result(inc5.apply(Basic.interpreterFuture), 100.second))
+
+  println(s"inc5n: $inc5n")
+  println(s"inc5o: $inc5o")
+  println(s"inc5p: $inc5p")
+  println(s"inc5f: $inc5f")
+  println(s"inc5t: $inc5t")
 
   val ne = Extended.expression.apply(Extended.interpreterNoWrap)
   val pe = Extended.expression.apply(Extended.interpreterPrettyPrint)
