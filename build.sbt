@@ -2,7 +2,7 @@ name := """LearnScalaz"""
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.11.11"
 
 resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 
@@ -37,6 +37,8 @@ libraryDependencies += "io.argonaut" %% "argonaut" % "6.1-M4"
 libraryDependencies += "io.monix" %% "monix" % "2.3.3"
 
 scalacOptions += "-feature"
+
+scalacOptions += "-Ypartial-unification"
 
 initialCommands in console := "import scalaz._, Scalaz._"
 initialCommands in console in Test := "import scalaz._, Scalaz._, scalacheck.ScalazProperties._, scalacheck.ScalazArbitrary._, scalacheck.ScalaCheckBinding._"
