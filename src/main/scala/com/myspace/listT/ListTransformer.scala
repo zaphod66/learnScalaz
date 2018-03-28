@@ -45,6 +45,26 @@ class Reporter[Raw, Frm](generate: () => List[Raw], f: Raw => Frm) extends Repor
   def complete              = Kleisli[Data, Frm, Frm](s => { println(s"complete($s)"); ListT[ErrorOr, Frm](\/-(List(s))) })
 }
 
+import scala.language.implicitConversions
+import scala.language.higherKinds
+
+object ListTAssociativity {
+
+  implicit def f2k[F[_], A, B](f: A => F[B]): Kleisli[F, A, B] = Kleisli(f)
+
+  val a: Int => ListT[List, Int] = {
+    case 0 => ListT(List(List(0, 1)))
+    case 1 => ListT(List(List(0), List(1)))
+  }
+
+  // see: https://gist.github.com/tpolecat/1227e22e3161b5816e014c00650f3b57
+
+//  type L[A] = ListT[List, A]
+//
+//  def f: Kleisli[L, Int, Int] = (a >=> a) >=> a
+//  def g: Kleisli[L, Int, Int] = a >=> (a >=> a)
+}
+
 object ListTransformer extends App {
   object Simple {
     type Meta = String
