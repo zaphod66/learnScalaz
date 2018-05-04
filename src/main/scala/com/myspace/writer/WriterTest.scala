@@ -31,3 +31,22 @@ object WriterTest extends App {
   println(s"result: ${w.a}")
   println(s"log:    ${w.w.mkString}")
 }
+
+// https://www.youtube.com/watch?v=po3wmq4S15A
+object RobNorrisWriter extends App {
+  import MyWriter._
+
+  type Info = List[String]
+
+  def f[A, B]: A => Writer[Info, B] = ???
+  def g[B, C]: B => Writer[Info, C] = ???
+
+  def h[A, C]: A => Writer[Info, C] = f andThen g
+
+  // example
+
+  def toDouble(i: Int): Writer[Info, Double] = Writer(List(s"toDouble($i)"), i.toDouble)
+
+  val t5 = toDouble(5)
+  println(s"toDouble(5) = $t5")
+}

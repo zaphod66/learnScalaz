@@ -242,7 +242,7 @@ object ReaderTest extends App {
 
     object Repo extends Repository.AccountRepositoryInMemory
 
-    val program = for {
+    private val program = for {
       _ <- open("a-123", "John Doe")
       _ <- open("a-124", "Eva Luator")
       _ <- open("a-125", "Mike Hammer")
@@ -254,13 +254,13 @@ object ReaderTest extends App {
       _ <- chain("a-123", "a-124", "a-125", 500)
     } yield ()
 
-    val command = for {
+    private val command = for {
       _ <- transfer("a-124", "a-123", 200)
       _ <- transfer("a-125", "a-124", 100)
       _ <- chain("a-123", "a-124", "a-125", 500)
     } yield ()
 
-    val delete = close("a-123")
+    private val delete = close("a-123")
 
     program.run(Repo)
     command.run(Repo)
@@ -298,7 +298,32 @@ object ReaderTest extends App {
     println(s"re3: $result3")
   }
 
+  object ReaderNorris {
+    import com.myspace.reader.MyStuff.Reader
+    import com.myspace.reader.ReaderScalazTest.Config
+
+
+    def f[A, B]: A => Reader[Config, B] = ???
+    def g[B, C]: B => Reader[Config, C] = ???
+
+    def h[A, C]: A => Reader[Config, C] = f andThen g
+
+    // example
+    type Host = String
+    def path(s: String): Reader[Host, String] = Reader { host => s"http://$host/$s" }
+
+    private val p = path("foo/bar")
+
+    val p1 = p.run("google.com")
+    val p2 = p.run("duckduck.go")
+
+    println(s"p1: $p1")
+    println(s"p2: $p2")
+  }
+
   ReaderInjectionApp
   println("--------")
   ReaderSequenceApp
+  println("--------")
+  ReaderNorris
 }
