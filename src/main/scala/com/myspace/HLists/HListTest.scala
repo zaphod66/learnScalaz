@@ -1,3 +1,6 @@
+// Jon Pretty 'Lifting data structures to the type level'
+// https://www.youtube.com/watch?v=q5I9qoyNePE
+
 package com.myspace.HLists
 
 object MyImpl {
@@ -8,6 +11,7 @@ object MyImpl {
   // type level contains
   trait Contains[V, L <: HList]
 
+  // buggy ...
   trait LowerPriority {
     implicit def contains2[V,
                            H,
