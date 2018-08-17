@@ -53,8 +53,6 @@ object IoTest extends App {
     import IOUtil._
 
     def fahrenheitToCelsius(f: Double): Double = (f - 32) * 5.0/9.0
-//    def ReadLine: IO[String] = IO { scala.io.StdIn.readLine() }
-//    def PrintLine(s: String): IO[Unit]  = IO { println(s) }
 
     def converter: IO[Unit] = for {
       _ <- PrintLine("Enter temp in Fahrenheit: ")
@@ -63,46 +61,121 @@ object IoTest extends App {
     } yield ()
   }
 
+  import scala.language.higherKinds
+
   object GuessGame {
     import IOUtil._
 
-    def nextInt(upper: Int): IO[Int] = IO { scala.util.Random.nextInt(upper) }
+    trait Program[F[_]] {
+      def finish[A](a: => A): F[A]
+      def chain[A, B](fa: F[A], afb: A => F[B]): F[B]
+      def map[A, B](fa: F[A], f: A => B): F[B]
+    }
+
+    object Program {
+      def apply[F[_]](implicit F: Program[F]): Program[F] = F
+    }
+
+    implicit class ProgrammSyntax[F[_], A](fa: F[A]) {
+      def map[B](f: A => B)(implicit F: Program[F]): F[B] = F.map(fa, f)
+      def flatMap[B](afb: A => F[B])(implicit F: Program[F]): F[B] = F.chain(fa, afb)
+    }
+
+    def finish[F[_], A](a: => A)(implicit F: Program[F]): F[A] = F.finish(a)
+
+    trait Console[F[_]] {
+      def putStrLn(line: String): F[Unit]
+      def getStrLn: F[String]
+    }
+
+    object Console {
+      def apply[F[_]](implicit F: Console[F]): Console[F] = F
+    }
+
+    def putStrLn[F[_]: Console](line: String): F[Unit] = Console[F].putStrLn(line)
+    def getStrLn[F[_]: Console]: F[String] = Console[F].getStrLn
+
+    trait Random[F[_]] {
+      def nextInt(upper: Int): F[Int]
+    }
+
+    object Random {
+      def apply[F[_]](implicit F: Random[F]): Random[F] = F
+    }
+
+//    def nextIntF[F[_]](upper: Int)(implicit F: Random[F]): F[Int]= Random[F].nextInt(upper)
+
+//    implicit val RandomIO: Random[IO] = new Random[IO] {
+//      override def nextInt(upper: Int): IO[Int] = IO { scala.util.Random.nextInt(upper) }
+//    }
+
+    object Implicits {
+
+      implicit val ProgramIO: Program[IO] = new Program[IO] {
+        def finish[A](a: => A): IO[A] = IO { a }
+        def chain[A, B](fa: IO[A], afb: A => IO[B]): IO[B] = fa.flatMap(afb)
+        def map[A, B](fa: IO[A], f: A => B): IO[B] = fa.map(f)
+      }
+
+      implicit val ConsoleIO: Console[IO] = new Console[IO] {
+        override def putStrLn(line: String): IO[Unit] = IO { println(line) }
+        override def getStrLn: IO[String] = IO { scala.io.StdIn.readLine }
+      }
+
+      implicit val RandomIO: Random[IO] = {
+        (upper: Int) => IO { scala.util.Random.nextInt(upper) }
+      }
+
+    }
+
+    def nextInt[F[_]](upper: Int)(implicit F: Random[F]): F[Int] = Random[F].nextInt(upper)
 
     def parseInt(s: String): Option[Int] = Try(s.toInt).toOption
 
-    def checkContinue(name: String): IO[Boolean] =
+    def checkContinue[F[_]: Program: Console](name: String): F[Boolean] = {
       for {
-        _     <- PrintLine(s"Do you want to continue, $name?")
-        input <- ReadLine
+        _     <- putStrLn(s"Do you want to continue, $name?")
+        input <- getStrLn
         cont  <- input match {
-            case "y" => IO { true  }
-            case "n" => IO { false }
+            case "y" => finish( true)
+            case "n" => finish(false)
             case _ => checkContinue(name)
           }
         } yield cont
+    }
 
-    def gameLoop(name: String): IO[Unit] =
+    def gameLoop[F[_]: Program: Console: Random](name: String): F[Unit] = {
       for {
         num   <- nextInt(5).map(_ + 1)
-        _     <- PrintLine(s"Dear $name, please guess a number from 1 to 5!")
-        input <- ReadLine
+        _     <- putStrLn(s"Dear $name, please guess a number from 1 to 5!")
+        input <- getStrLn
         _     <- parseInt(input).fold(
-                   PrintLine("You did not enter a number.")
-                 )(guess =>
-                   if (guess == num) PrintLine(s"You guessed right!")
-                   else PrintLine(s"You guessed wrong, $name! The number was $num")
-                 )
-        cont  <- checkContinue(name)
-        _     <- if (cont) gameLoop(name) else IO{ () }
+                    putStrLn("You did not enter a number.")
+                  )(guess =>
+                    if (guess == num) putStrLn(s"You guessed right!")
+                    else putStrLn(s"You guessed wrong, $name! The number was $num")
+                  )
+        cont <- checkContinue(name)
+        _ <- if (cont) gameLoop(name) else finish {
+          ()
+        }
       } yield ()
+    }
 
-    def game = gameLoop("Zaphod")
-
+    def main[F[_]: Program: Console: Random]: F[Unit] =
+      for {
+        _    <- putStrLn("What is your name?")
+        name <- getStrLn
+        _    <- putStrLn(s"Hello, $name, welcome to the game")
+        _    <- gameLoop(name)
+      } yield ()
   }
 
 //  FirstStep
 //
 //  Converter.converter.run
 
-  GuessGame.game.run
+  import GuessGame.Implicits._
+  
+  GuessGame.main.run
 }
