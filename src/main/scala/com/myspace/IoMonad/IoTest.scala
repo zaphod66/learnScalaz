@@ -64,7 +64,6 @@ object IoTest extends App {
   import scala.language.higherKinds
 
   object GuessGame {
-    import IOUtil._
 
     trait Program[F[_]] {
       def finish[A](a: => A): F[A]
@@ -102,12 +101,6 @@ object IoTest extends App {
     object Random {
       def apply[F[_]](implicit F: Random[F]): Random[F] = F
     }
-
-//    def nextIntF[F[_]](upper: Int)(implicit F: Random[F]): F[Int]= Random[F].nextInt(upper)
-
-//    implicit val RandomIO: Random[IO] = new Random[IO] {
-//      override def nextInt(upper: Int): IO[Int] = IO { scala.util.Random.nextInt(upper) }
-//    }
 
     object Implicits {
 
@@ -156,9 +149,7 @@ object IoTest extends App {
                     else putStrLn(s"You guessed wrong, $name! The number was $num")
                   )
         cont <- checkContinue(name)
-        _ <- if (cont) gameLoop(name) else finish {
-          ()
-        }
+        _ <- if (cont) gameLoop(name) else finish { () }
       } yield ()
     }
 
@@ -169,13 +160,15 @@ object IoTest extends App {
         _    <- putStrLn(s"Hello, $name, welcome to the game")
         _    <- gameLoop(name)
       } yield ()
+
+    import Implicits._
+
+    def mainIO: IO[Unit] = main[IO]
   }
 
 //  FirstStep
 //
 //  Converter.converter.run
 
-  import GuessGame.Implicits._
-  
-  GuessGame.main.run
+  GuessGame.mainIO.run
 }
