@@ -121,6 +121,44 @@ object IoTest extends App {
 
     }
 
+    case class TestData(input: List[String], output: List[String], nums: List[Int]) {
+      def putStrLn(line: String): (TestData, Unit) = (copy(output = line :: output), ())
+      def getStrLn: (TestData, String) = (copy(input = input.drop(1)), input.head)
+      def nextInt(upper: Int): (TestData, Int) = (copy(nums = nums.drop(1)), nums.head)
+
+      def showResults: String = output.reverse.mkString("\n")
+    }
+
+    case class TestIO[A](run: TestData => (TestData, A)) { self =>
+      def map[B](f: A => B): TestIO[B] = TestIO( t => self.run(t) match { case (t, a) => (t, f(a)) } )
+      def flatMap[B](f: A => TestIO[B]): TestIO[B] = TestIO(t => self.run(t) match { case (t, a) => f(a).run(t) })
+
+      def eval(t: TestData): TestData = run(t)._1
+    }
+
+    object TestIO {
+      def point[A](a: => A): TestIO[A] = TestIO(t => (t, a))
+    }
+
+    object TestIOImplicits {
+
+      implicit val ProgramTestIO: Program[TestIO] = new Program[TestIO] {
+        def finish[A](a: => A): TestIO[A] = TestIO.point(a)
+        def chain[A, B](fa: TestIO[A], afb: A => TestIO[B]): TestIO[B] = fa.flatMap(afb)
+        def map[A, B](fa: TestIO[A], f: A => B): TestIO[B] = fa.map(f)
+      }
+
+      implicit val ConsoleTestIO: Console[TestIO] = new Console[TestIO] {
+        override def putStrLn(line: String): TestIO[Unit] = TestIO( t => t.putStrLn(line) )
+        override def getStrLn: TestIO[String] =TestIO( t => t.getStrLn )
+      }
+
+      implicit val RandomTestIO: Random[TestIO] = {
+        (upper: Int) => TestIO( t => t.nextInt(upper) )
+      }
+
+    }
+
     def nextInt[F[_]](upper: Int)(implicit F: Random[F]): F[Int] = Random[F].nextInt(upper)
 
     def parseInt(s: String): Option[Int] = Try(s.toInt).toOption
@@ -157,18 +195,32 @@ object IoTest extends App {
       for {
         _    <- putStrLn("What is your name?")
         name <- getStrLn
-        _    <- putStrLn(s"Hello, $name, welcome to the game")
+        _    <- putStrLn(s"Hello, $name, welcome to the game.")
         _    <- gameLoop(name)
       } yield ()
 
     import Implicits._
 
     def mainIO: IO[Unit] = main[IO]
+
+    import TestIOImplicits._
+
+    def mainTestIO: TestIO[Unit] = main[TestIO]
+
+    val testExample = TestData(
+      input  = "John" :: "2" :: "y" :: "1" :: "n" :: Nil,
+      output = Nil,
+      nums   = 0 :: 0 :: Nil
+    )
+
+    def runTest = mainTestIO.eval(testExample).showResults
   }
 
 //  FirstStep
 //
 //  Converter.converter.run
 
-  GuessGame.mainIO.run
+  println(GuessGame.runTest)
+
+//  GuessGame.mainIO.run
 }
