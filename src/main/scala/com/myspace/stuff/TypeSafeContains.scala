@@ -12,7 +12,7 @@ object TypeSafeContains extends App {
 
   val r3 = xs.safeContains(2)
 //  val r4 = xs.safeContains("Hello")
-//  [error] /Users/nscheller/work/gitrepos/projects/zaphod66/learnScalaz/src/main/scala/com/myspace/stuff/TypeSafeContains.scala:14: type mismatch;
+//  [error] .../TypeSafeContains.scala:14: type mismatch;
 //  [error]  found   : String("Hello")
 //  [error]  required: Int
 //  [error]   val r4 = xs.safeContains("Hello")
