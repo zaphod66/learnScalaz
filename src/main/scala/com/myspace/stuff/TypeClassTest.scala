@@ -1,9 +1,5 @@
 package com.myspace.stuff
 
-trait Addable[A] {
-  def add(that: A): A
-}
-
 object TypeClassTest extends App {
 
   object Overloading {
@@ -14,18 +10,22 @@ object TypeClassTest extends App {
     println(s"""combine("22", "44") = ${combine("22", "44")}""")
   }
 
-  object Conversion {
-    import scala.language.implicitConversions
-
-    // A must be convertible to Addable[A] (view bounds are deprecated in 2.11)
-    def combine[A <% Addable[A]](x: A, y: A): A = x.add(y)
-
-    implicit def intToAddable(x: Int): Addable[Int] = new Addable[Int] {
-      override def add(that: Int) = x + that
+  object TypeClass0 {
+    trait Adder[A] {
+      def add(x: A, y: A): A
     }
 
-    implicit def stringToAddable(x: String): Addable[String] = new Addable[String] {
-      override def add(that: String) = x + that
+    implicit val intAddable: Adder[Int] = {
+      (x: Int, y: Int) => x + y
+    }
+
+    implicit val stringAddable: Adder[String] = {
+      (x: String, y: String) => x + y
+    }
+
+    // A must be convertible to Addable[A] (view bounds are deprecated in 2.11)
+    def combine[A: Adder](x: A, y: A): A = {
+      implicitly[Adder[A]].add(x, y)
     }
 
     println(  s"combine(4224, 4224) = ${combine(4224, 4224)}")
@@ -134,7 +134,7 @@ object TypeClassTest extends App {
   }
 
   Overloading
-  Conversion
+  TypeClass0
   TypeClass1
   TypeClass2
   TypeClass3
