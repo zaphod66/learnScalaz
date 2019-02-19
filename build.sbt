@@ -34,6 +34,8 @@ libraryDependencies += "io.reactivex" %% "rxscala" % "0.25.0"
 
 libraryDependencies += "io.argonaut" %% "argonaut" % "6.1-M4"
 
+libraryDependencies += "com.slamdata" %% "matryoshka-core" % "0.18.3"
+
 scalacOptions += "-feature"
 
 initialCommands in console := "import scalaz._, Scalaz._"
