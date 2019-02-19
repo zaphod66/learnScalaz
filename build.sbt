@@ -2,23 +2,23 @@ name := """LearnScalaz"""
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.11.7"
+scalaVersion := "2.12.8"
 
 resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 
-val scalazVersion = "7.1.3"
+val scalazVersion = "7.2.8"
 
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % scalazVersion,
   "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
   "org.scalaz" %% "scalaz-effect" % scalazVersion,
-  "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
+  "org.scalaz" %% "scalaz-typelevel" % "7.1.17",
   "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
-  "com.storm-enroute" %% "scalameter-core" % "0.6",
-  "com.storm-enroute" %% "scalameter" % "0.6" % "test"
+  "com.storm-enroute" %% "scalameter-core" % "0.10.1",
+  "com.storm-enroute" %% "scalameter" % "0.10.1" % "test"
 )
 
-libraryDependencies += "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.4" % "test"
 
@@ -30,9 +30,9 @@ libraryDependencies += "commons-io" % "commons-io" % "2.3"
 
 // libraryDependencies += "com.typesafe.play" %% "play-json" % "2.4.2"
 
-libraryDependencies += "io.reactivex" %% "rxscala" % "0.25.0"
+libraryDependencies += "io.reactivex" %% "rxscala" % "0.26.5"
 
-libraryDependencies += "io.argonaut" %% "argonaut" % "6.1-M4"
+libraryDependencies += "io.argonaut" %% "argonaut" % "6.2.2"
 
 libraryDependencies += "com.slamdata" %% "matryoshka-core" % "0.18.3"
 
