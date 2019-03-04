@@ -30,8 +30,11 @@ object Orchestration {
   type Requestable[A] = Coyoneda[Request, A]
 
   object Request {
-    def pure[A](a: A) = Free.liftF(Pure(a) : Request[A])
-    def fetch[A](service: Service[A]) = Free.liftF(Fetch(service) : Request[A])
+//    def pure[A](a: A) = Free.liftF(Pure(a) : Request[A])
+//    def fetch[A](service: Service[A]) = Free.liftF(Fetch(service) : Request[A])
+
+    def pure[A](a: A): Free[Requestable, A] = Free.liftF(Coyoneda.lift(Pure(a)))
+    def fetch[A](service: Service[A]): Free[Requestable, A] = Free.liftF(Fetch(service) : Request[A])
   }
 
   object IdInterpreter extends (Request ~> Id.Id) {

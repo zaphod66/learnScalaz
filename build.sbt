@@ -2,23 +2,20 @@ name := """LearnScalaz"""
 
 version := "1.0-SNAPSHOT"
 
-scalaVersion := "2.12.5"
+scalaVersion := "2.12.8"
 
 resolvers += "Scalaz Bintray Repo" at "http://dl.bintray.com/scalaz/releases"
 
-// val scalazVersion = "7.2.12"
-
-val scalazVersion = "7.2.21"
+val scalazVersion = "7.2.8"
 
 libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % scalazVersion,
   "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
   "org.scalaz" %% "scalaz-effect" % scalazVersion,
-//  "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
   "org.scalaz" %% "scalaz-ioeffect" % "2.1.0",
   "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
-  "com.storm-enroute" %% "scalameter-core" % "0.9",
-  "com.storm-enroute" %% "scalameter" % "0.9" % "test"
+  "com.storm-enroute" %% "scalameter-core" % "0.10.1",
+  "com.storm-enroute" %% "scalameter" % "0.10.1" % "test"
 )
 
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
@@ -35,11 +32,15 @@ libraryDependencies += "commons-io" % "commons-io" % "2.3"
 
 libraryDependencies += "io.reactivex" %% "rxscala" % "0.26.5"
 
-libraryDependencies += "io.argonaut" %% "argonaut" % "6.2.1"
-
 // libraryDependencies ++= Seq(slick, h2, scalaTest % Test)
 
 libraryDependencies += "io.monix" %% "monix" % "2.3.3"
+
+libraryDependencies += "io.argonaut" %% "argonaut" % "6.2.2"
+
+libraryDependencies += "com.slamdata" %% "matryoshka-core" % "0.18.3"
+
+libraryDependencies += "org.scalaz" %% "scalaz-zio" % "0.9"
 
 scalacOptions += "-feature"
 

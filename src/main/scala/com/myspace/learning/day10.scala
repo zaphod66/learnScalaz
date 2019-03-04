@@ -18,24 +18,26 @@ object day10 extends App {
 
   type ReaderTOption[A, B] = ReaderT[Option, A, B]
 
-  object ReaderTOption extends KleisliInstances {
-    def apply[A, B](f: A => Option[B]): ReaderTOption[A, B] = Kleisli.kleisli(f)
-  }
+  // does not compile with scalaz 7.2 !!!
 
-  def conf(key: String) = ReaderTOption[Map[String, String], String] { _.get(key) }
+//  object ReaderTOption extends KleisliInstances with KleisliFunctions {
+//    def apply[A, B](f: A => Option[B]): ReaderTOption[A, B] = kleisli(f)
+//  }
+//
+//  def conf(key: String) = ReaderTOption[Map[String, String], String] { _.get(key) }
 
-  def setupConnection = for {
-    host <- conf("host")
-    user <- conf("user")
-    pass <- conf("pass")
-  } yield (host, user, pass)
+//  def setupConnection = for {
+//    host <- conf("host")
+//    user <- conf("user")
+//    pass <- conf("pass")
+//  } yield (host, user, pass)
 
-  val conf1 = Map("host" -> "localhost", "user" -> "joe", "pass" -> "****")
-  val conf2 = Map("host" -> "localhost", "user" -> "joe")
-
-  // ReaderTOption combines Reader's ability and Option's ability
-  val setup1 = setupConnection(conf1) // Some...
-  val setup2 = setupConnection(conf2) // None
+//  val conf1 = Map("host" -> "localhost", "user" -> "joe", "pass" -> "****")
+//  val conf2 = Map("host" -> "localhost", "user" -> "joe")
+//
+//  // ReaderTOption combines Reader's ability and Option's ability
+//  val setup1 = setupConnection(conf1) // Some...
+//  val setup2 = setupConnection(conf2) // None
 
   // Stacking multiple monad transformers
 
@@ -51,9 +53,8 @@ object day10 extends App {
 //    def get[C, S]: StateTReaderTOption[C, S, S] = StateTReaderTOption { s => (s, s) }
 //    def put[C, S](s: S): StateTReaderTOption[C, S, Unit] = StateTReaderTOption { _ => (s, ())}
 //  }
+  type StateTReaderTOption[C, S, A] = StateT[({type l[X] = ReaderTOption[C, X]})#l, S, A]
 
-//  type StateTReaderTOption[C, S, A] = StateT[({type l[X] = ReaderTOption[C, X]})#l, S, A]
-//
 //  object StateTReaderTOption extends StateTInstances with StateTFunctions {
 //    def apply[C, S, A](f: S => (S, A)) = new StateT[({type l[X] = ReaderTOption[C, X]})#l, S, A] {
 //      def apply(s: S) = f(s).point[({type l[X] = ReaderTOption[C, X]})#l]
@@ -62,12 +63,12 @@ object day10 extends App {
 //    def get[C, S]: StateTReaderTOption[C, S, S] = StateTReaderTOption { s => (s, s) }
 //    def put[C, S](s: S): StateTReaderTOption[C, S, Unit] = StateTReaderTOption { _ => (s, ())}
 //  }
-//
-//  // Stack like day07
-//
-//  type Stack = List[Int]
-//  type Config = Map[String, String]
-//
+
+  // Stack like day07
+
+  type Stack = List[Int]
+  type Config = Map[String, String]
+
 //  val pop1 = StateTReaderTOption[Config, Stack, Int] { case x::xs => (xs, x) }
 //
 //  val pop2: StateTReaderTOption[Config, Stack, Int] = {
