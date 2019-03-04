@@ -12,7 +12,7 @@ libraryDependencies ++= Seq(
   "org.scalaz" %% "scalaz-core" % scalazVersion,
   "org.scalaz" %% "scalaz-concurrent" % scalazVersion,
   "org.scalaz" %% "scalaz-effect" % scalazVersion,
-  "org.scalaz" %% "scalaz-typelevel" % "7.1.17",
+//  "org.scalaz" %% "scalaz-typelevel" % "7.1.17",
   "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
   "com.storm-enroute" %% "scalameter-core" % "0.10.1",
   "com.storm-enroute" %% "scalameter" % "0.10.1" % "test"
@@ -35,6 +35,8 @@ libraryDependencies += "io.reactivex" %% "rxscala" % "0.26.5"
 libraryDependencies += "io.argonaut" %% "argonaut" % "6.2.2"
 
 libraryDependencies += "com.slamdata" %% "matryoshka-core" % "0.18.3"
+
+libraryDependencies += "org.scalaz" %% "scalaz-zio" % "0.9"
 
 scalacOptions += "-feature"
 
