@@ -47,6 +47,23 @@ object RecursionTest extends App {
     }
 
     val numDolls = dolls1.cata[Int](algebra)
+
+    println(s"dolls1: $dolls1 #: $numDolls")
+    println(s"dolls2: $dolls2")
+
+    case class Person(name: String, age: Int)
+
+    val algebraPerson: Algebra[Matryoshka, List[Person]] = {
+      case Doll(n, d) => d :+ Person(n, d.last.age + 1)
+      case Tiny(n)    => Person(n, 6) :: Nil
+    }
+
+    val persons1 = names.ana[Fix[Matryoshka]](coalgebra).cata[List[Person]](algebraPerson)
+    val persons2 = names.hylo(algebraPerson, coalgebra)
+
+    println(s"person1: $persons1")
+    println(s"person2: $persons2")
   }
 
+  RemoveRecursion
 }
