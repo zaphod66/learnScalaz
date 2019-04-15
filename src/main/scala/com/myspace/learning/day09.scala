@@ -29,7 +29,7 @@ object day09 extends App {
   val f1 = freeTree.loc.getChild(2) >>= { _.getChild(1) } >>= { _.modifyLabel({_ => 'P'}).some }
   val t1 = f1 map { _.toTree }
 
-  t1 foreach { _.draw foreach { _.println } }
+//t1 foreach { _.draw foreach { _.println } }
 
   // Zipper
 

@@ -3,9 +3,12 @@ package com.myspace.free
 // see https://softwaremill.com/free-monads/
 // see http://underscore.io/blog/posts/2015/04/14/free-monads-are-simple.html
 
+/*
 import scalaz.{Free, Id, ~>, Coyoneda}
 import scalaz.std.list._
 import scalaz.syntax.traverse._
+
+import scalaz._, Scalaz._
 
 object Orchestration {
   type UserId = Int
@@ -27,7 +30,7 @@ object Orchestration {
   type Requestable[A] = Coyoneda[Request, A]
 
   object Request {
-    def pure[A](a: A): Free[Requestable, A] = Free.liftFC(Pure(a) : Request[A])
+    def pure[A](a: A): Free[Requestable, A] = Free.liftF(Pure(a) : Requestable[A])
     def fetch[A](service: Service[A]): Free[Requestable, A] = Free.liftFC(Fetch(service) : Request[A])
   }
 
@@ -96,3 +99,4 @@ object FreeTest extends App {
   val t = ma map { case (s,u) => s"$s -> $u"}
   t foreach println
 }
+*/

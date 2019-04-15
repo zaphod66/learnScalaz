@@ -18,6 +18,8 @@ libraryDependencies ++= Seq(
   "com.storm-enroute" %% "scalameter" % "0.10.1" % "test"
 )
 
+libraryDependencies += "org.scalaz" %% "scalaz-zio" % "1.0-RC3"
+
 libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
 libraryDependencies += "org.scalacheck" %% "scalacheck" % "1.12.4" % "test"

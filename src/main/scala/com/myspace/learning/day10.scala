@@ -17,7 +17,7 @@ object day10 extends App {
   } yield (a, b, c)
 
   type ReaderTOption[A, B] = ReaderT[Option, A, B]
-
+/*
   object ReaderTOption extends KleisliInstances with KleisliFunctions {
     def apply[A, B](f: A => Option[B]): ReaderTOption[A, B] = kleisli(f)
   }
@@ -109,5 +109,5 @@ object day10 extends App {
   } yield a
 
   val s2 = stackManip5(List(5, 8, 2, 1))(Map("x" -> "7"))
-
+*/
 }
