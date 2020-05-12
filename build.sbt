@@ -17,6 +17,7 @@ libraryDependencies ++= Seq(
 //  "org.scalaz" %% "scalaz-typelevel" % scalazVersion,
   "org.scalaz" %% "scalaz-ioeffect" % "2.1.0",
   "org.scalaz" %% "scalaz-zio" % "0.3.2",
+//  "org.scalaz" %% "scalaz-zio" % "1.0-RC3",
   "org.scalaz" %% "scalaz-scalacheck-binding" % scalazVersion % "test",
   "com.storm-enroute" %% "scalameter-core" % "0.9",
   "com.storm-enroute" %% "scalameter" % "0.9" % "test"
