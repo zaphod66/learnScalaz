@@ -40,7 +40,7 @@ libraryDependencies += "io.argonaut" %% "argonaut" % "6.2.2"
 
 libraryDependencies += "com.slamdata" %% "matryoshka-core" % "0.18.3"
 
-libraryDependencies += "org.scalaz" %% "scalaz-zio" % "0.9"
+libraryDependencies += "org.scalaz" %% "scalaz-zio" % "0.10"
 
 scalacOptions += "-feature"
 
